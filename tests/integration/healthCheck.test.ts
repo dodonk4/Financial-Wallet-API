@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import request from "supertest";
 import app from "../../src/app";
 import { prisma } from '../../src/infrastructure/database/prisma';

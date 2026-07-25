@@ -5,7 +5,7 @@ import { redisClient } from '../../../../infrastructure/cache/redisClient';
 export const readinessController = async (req: express.Request, res: express.Response) => {
     try {
 
-        prisma.$queryRaw`SELECT 1`;
+        await prisma.$queryRaw`SELECT 1`;
 
         await redisClient.ping();
 
