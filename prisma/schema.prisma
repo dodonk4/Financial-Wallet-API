@@ -15,3 +15,34 @@ datasource db {
 model HealthCheck{
   id Int @id @default(autoincrement())
 }
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+
+  firstName    String
+  lastName     String
+
+  identifierType String
+  identifierNumber String
+
+  role         UserRole    @default(USER)
+  status       UserStatus  @default(ACTIVE)
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([identifierType, identifierNumber])
+}
