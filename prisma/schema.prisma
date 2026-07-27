@@ -28,21 +28,53 @@ enum UserStatus {
 }
 
 model User {
-  id           String      @id @default(uuid())
-  email        String      @unique
-  passwordHash String
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  firstName    String
-  lastName     String
+  email            String     @unique
+  passwordHash     String     @map("password_hash")
 
-  identifierType String
-  identifierNumber String
+  firstName        String     @map("first_name")
+  lastName         String     @map("last_name")
 
-  role         UserRole    @default(USER)
-  status       UserStatus  @default(ACTIVE)
+  identifierType   String     @map("identifier_type")
+  identifierNumber String     @map("identifier_number")
 
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  role             UserRole   @default(USER)
+  status           UserStatus @default(ACTIVE)
 
-  @@unique([identifierType, identifierNumber])
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  accounts         Account[]
+
+  @@unique([identifierType, identifierNumber], map: "uq_users_identifier")
+  @@map("users")
+}
+
+enum Currency {
+  ARS,
+  USD
+}
+
+enum AccountStatus {
+  ACTIVE
+  BLOCKED
+  CLOSED
+}
+
+model Account {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  currency      Currency
+  balanceCache  Decimal  @default(0.00) @map("balance_cache") @db.Decimal(18, 2)
+  heldBalance   Decimal  @default(0.00) @map("held_balance") @db.Decimal(18, 2)
+  status        AccountStatus @default(ACTIVE)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user          User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, currency], map: "uq_accounts_user_currency")
+  @@index([userId], map: "idx_accounts_user_id")
+  @@map("accounts")
 }
