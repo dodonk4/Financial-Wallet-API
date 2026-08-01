@@ -1,3 +1,6 @@
-export interface UserStatus {
-    enum: ["ACTIVE", "SUSPENDED", "DELETED"]
-}
+export const UserStatus = {
+  ACTIVE: "ACTIVE",
+  BLOCKED: "BLOCKED",
+} as const;
+
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];

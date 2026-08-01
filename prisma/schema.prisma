@@ -52,7 +52,7 @@ model User {
 }
 
 enum Currency {
-  ARS,
+  ARS
   USD
 }
 
