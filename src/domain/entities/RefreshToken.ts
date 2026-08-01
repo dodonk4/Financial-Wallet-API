@@ -1,33 +1,55 @@
 export interface RefreshTokenProps {
   id: string;
-  ownerUserId: string;
-  targetAccountId: string;
-  alias: string;
-  deletedAt: Date;
+  userId: string;
+  token: string;
+  expiresAt: Date;
+  createdAt: Date;
 }
 
 export class RefreshToken {
-  constructor(private readonly props: RefreshTokenProps) {}
+  private constructor(
+    private readonly props: RefreshTokenProps,
+  ) {}
+
+  static create(props: {
+    id: string;
+    userId: string;
+    token: string;
+    expiresAt: Date;
+  }): RefreshToken {
+
+    return new RefreshToken({
+      ...props,
+      createdAt: new Date(),
+    });
+
+  }
+
+  static restore(props: RefreshTokenProps): RefreshToken {
+    return new RefreshToken(props);
+  }
 
   get id() {
     return this.props.id;
   }
 
-  get ownerUserId() {
-    return this.props.ownerUserId;
+  get userId() {
+    return this.props.userId;
   }
 
-  get targetAccountId() {
-    return this.props.targetAccountId;
+  get token() {
+    return this.props.token;
   }
 
-  get alias() {
-    return this.props.alias;
+  get expiresAt() {
+    return this.props.expiresAt;
   }
 
-  get deletedAt() {
-    return this.props.deletedAt;
+  get createdAt() {
+    return this.props.createdAt;
   }
 
-  // ...
+  isExpired(referenceDate: Date = new Date()): boolean {
+    return this.props.expiresAt <= referenceDate;
+  }
 }

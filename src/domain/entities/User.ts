@@ -14,7 +14,7 @@ export interface UserProps {
 }
 
 export class User {
-  constructor(private readonly props: UserProps) {}
+  private constructor(private readonly props: UserProps) { }
 
   static create(props: {
     id: string;
@@ -40,5 +40,27 @@ export class User {
     return this.props.email;
   }
 
-  // ...
+  get firstName() {
+    return this.props.firstName;
+  }
+
+  get lastName() {
+    return this.props.lastName;
+  }
+
+  get role() {
+    return this.props.role;
+  }
+
+  get status() {
+    return this.props.status;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
 }
