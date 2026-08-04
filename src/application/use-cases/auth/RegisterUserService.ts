@@ -5,7 +5,7 @@ import { Currency } from "../../../domain/entities/Currency.ts";
 import { RefreshToken } from "../../../domain/entities/RefreshToken.ts";
 import { User } from "../../../domain/entities/User.ts";
 
-import { EmailAlreadyExistsError } from "../../../domain/errors/EmailAlreadyExistsError.ts";
+import { EmailAlreadyExistsError } from "../../../domain/errors/EmaiAlreadyExistsError.ts";
 import { DocumentAlreadyExistsError } from "../../../domain/errors/DocumentAlreadyExistsError.ts";
 
 import { UserRegisteredEvent } from "../../../domain/events/UserRegisteredEvent.ts";
@@ -108,7 +108,7 @@ export class RegisterUserService {
     // 9. Publicar evento
 
     await this.eventPublisher.publish(
-      new UserRegisteredEvent(user.id),
+      new UserRegisteredEvent(user.id, user.email),
     );
 
     // 10. Responder
