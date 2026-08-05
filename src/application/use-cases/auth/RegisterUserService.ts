@@ -26,13 +26,13 @@ export class RegisterUserService {
     private readonly tokenProvider: ITokenServiceProvider,
     private readonly eventPublisher: IEventPublisher,
     private readonly unitOfWork: IUnitOfWork,
-  ) {}
+  ) { }
 
   async execute(
     dto: RegisterUserRequestDTO,
   ): Promise<RegisterUserResponseDTO> {
 
-    // 1. Verificar email
+
 
     const emailExists = await this.userRepository.existsByEmail(dto.email);
 
@@ -40,7 +40,7 @@ export class RegisterUserService {
       throw new EmailAlreadyExistsError(dto.email);
     }
 
-    // 2. Verificar documento
+
 
     const documentExists = await this.userRepository.existsByDocument(
       dto.document.type,
@@ -51,11 +51,13 @@ export class RegisterUserService {
       throw new DocumentAlreadyExistsError(dto.document.number);
     }
 
-    // 3. Hashear contraseña
+
+
 
     const passwordHash = await this.passwordHasher.hash(dto.password);
 
-    // 4. Crear User
+
+
 
     const user = User.create({
       id: randomUUID(),
@@ -65,7 +67,8 @@ export class RegisterUserService {
       lastName: dto.lastName,
     });
 
-    // 5. Crear Account
+
+
 
     const account = Account.create({
       id: randomUUID(),
@@ -73,11 +76,10 @@ export class RegisterUserService {
       currency: Currency.ARG,
     });
 
-    // 6. Generar tokens
+
+
 
     const tokens = await this.tokenProvider.generate(user);
-
-    // 7. Crear entidad RefreshToken
 
     const refreshToken = RefreshToken.create({
       id: randomUUID(),
@@ -88,7 +90,8 @@ export class RegisterUserService {
       ),
     });
 
-    // 8. Persistir todo
+
+
 
     await this.unitOfWork.execute(async (repositories) => {
 
@@ -100,13 +103,15 @@ export class RegisterUserService {
 
     });
 
-    // 9. Publicar evento
+
+
 
     await this.eventPublisher.publish(
       new UserRegisteredEvent(user.id, user.email),
     );
 
-    // 10. Responder
+
+
 
     return {
       user: {
@@ -116,7 +121,7 @@ export class RegisterUserService {
         lastName: user.lastName,
         role: user.role,
       },
-      account : {
+      account: {
         id: account.id,
         currency: account.currency,
         balance: account.balance
