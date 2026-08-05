@@ -75,19 +75,14 @@ export class RegisterUserService {
 
     // 6. Generar tokens
 
-    const accessToken = await this.tokenProvider.generateAccessToken(
-      user.id,
-      user.role,
-    );
-
-    const refreshTokenValue = await this.tokenProvider.generateRefreshToken(user.id);
+    const tokens = await this.tokenProvider.generate(user);
 
     // 7. Crear entidad RefreshToken
 
     const refreshToken = RefreshToken.create({
       id: randomUUID(),
       userId: user.id,
-      token: refreshTokenValue,
+      token: tokens.refreshToken,
       expiresAt: new Date(
         Date.now() + 1000 * 60 * 60 * 24 * 30,
       ),
@@ -126,7 +121,7 @@ export class RegisterUserService {
         currency: account.currency,
         balance: account.balance
       },
-      accessToken,
+      accessToken: tokens.accessToken,
       refreshToken: refreshToken.token
     };
   }
