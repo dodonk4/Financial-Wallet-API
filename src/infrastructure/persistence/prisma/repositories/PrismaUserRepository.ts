@@ -16,18 +16,26 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async existsByDocument(documentType: string, documentNumber: string): Promise<boolean> {
-      //...
-      
+
+    const user = await prisma.user.findUnique({
+      where: {
+        identifierType_identifierNumber: {
+          identifierType: documentType,
+          identifierNumber: documentNumber,
+        },
+      }
+    })
+
+    return user !== null;
+
   }
 
   async create(user: User): Promise<User> {
-      //...
-      
+
   }
 
   async findById(id: string): Promise<User | null> {
-      //...
+
   }
 
-  // resto de métodos...
 }
