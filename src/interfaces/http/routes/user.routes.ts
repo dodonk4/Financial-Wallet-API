@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { UserController } from "../controllers/entities/UserController";
+import { validateRequest } from "../validators/validateRequest";
+import { registerUserSchema } from "../schemas/registerUserSchema";
 
 export const createUserRouter = (
   userController: UserController,
@@ -8,7 +10,7 @@ export const createUserRouter = (
 
   router.post(
     "/register",
-    validateRequest(registerUserSchema),//hacerlo
+    validateRequest(registerUserSchema),
     userController.register,
   );
 
