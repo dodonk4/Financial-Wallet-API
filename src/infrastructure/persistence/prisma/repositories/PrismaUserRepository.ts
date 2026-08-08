@@ -1,12 +1,13 @@
-import { prisma } from "../../../database/prisma.ts";
+import { Prisma, PrismaClient } from "../../../../../generated/prisma/client.ts";
 import { IUserRepository } from "../../../../application/ports/output/IUserRepository.ts";
 import { User } from "../../../../domain/entities/User.ts";
 
 export class PrismaUserRepository implements IUserRepository {
+  constructor(private readonly prisma: PrismaClient | Prisma.TransactionClient) {}
 
   async existsByEmail(email: string): Promise<boolean> {
 
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         email,
       },
@@ -17,7 +18,7 @@ export class PrismaUserRepository implements IUserRepository {
 
   async existsByDocument(documentType: string, documentNumber: string): Promise<boolean> {
 
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         identifierType_identifierNumber: {
           identifierType: documentType,
