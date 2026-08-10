@@ -24,7 +24,7 @@ Changing:
 
 `localhost`
 
-fir:
+for:
 
 `127.0.0.1`
 
