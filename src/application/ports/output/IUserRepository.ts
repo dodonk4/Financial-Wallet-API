@@ -6,7 +6,7 @@ export interface IUserRepository {
 
   existsByDocument(
     documentType: string,
-    documentNumber: string
+    documentNumber: number
   ): Promise<boolean>;
 
   create(user: User): Promise<User>;
