@@ -2,11 +2,11 @@ import { Router } from "express";
 import { readinessController } from "../controllers/health/readiness.controller";
 import { healthCheckController } from "../controllers/health/healthCheck.controller";
 
-const router = Router();
+const healthRouter = Router();
 
 
-router.get("/", healthCheckController);
+healthRouter.get("/", healthCheckController);
 
-router.get("/ready", readinessController);
+healthRouter.get("/ready", readinessController);
 
-export default router;
+export default healthRouter;
