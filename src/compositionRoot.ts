@@ -15,6 +15,7 @@ import { RegisterUserUseCase } from "./application/use-cases/auth/RegisterUserUs
 import { UserController } from "./interfaces/http/controllers/entities/UserController.ts";
 import { createUserRouter } from "./interfaces/http/routes/user.routes.ts";
 import { prisma } from "./infrastructure/database/prisma.ts";
+import healthRouter from "./interfaces/http/routes/health.routes.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -44,6 +45,7 @@ const userRouter = createUserRouter(
 );
 
 app.use("/users", userRouter);
+app.use("/health", healthRouter);
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Financial Wallet API' });
 });
