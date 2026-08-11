@@ -5,7 +5,6 @@ export interface RegisterUserRequestDTO {
   password: string;
   document: {
     type: string;
-    number: string;
+    number: number;
   };
-  birthDate: string;
 }

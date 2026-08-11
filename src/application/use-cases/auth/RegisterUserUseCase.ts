@@ -10,14 +10,14 @@ import { DocumentAlreadyExistsError } from "../../../domain/errors/DocumentAlrea
 
 import { UserRegisteredEvent } from "../../../domain/events/UserRegisteredEvent.ts";
 
-import { IUserRepository } from "../../ports/output/IUserRepository.ts";
-import { IPasswordHasher } from "../../ports/output/IPasswordHasher.ts";
-import { ITokenServiceProvider } from "../../ports/output/ITokenServiceProvider.ts";
-import { IEventPublisher } from "../../ports/output/IEventPublisher.ts";
-import { IUnitOfWork } from "../../ports/output/IUnitOfWork.ts";
+import type { IUserRepository } from "../../ports/output/IUserRepository.ts";
+import type { IPasswordHasher } from "../../ports/output/IPasswordHasher.ts";
+import type { ITokenServiceProvider } from "../../ports/output/ITokenServiceProvider.ts";
+import type { IEventPublisher } from "../../ports/output/IEventPublisher.ts";
+import type { IUnitOfWork } from "../../ports/output/IUnitOfWork.ts";
 
-import { RegisterUserRequestDTO } from "./RegisterUserRequestDTO.ts";
-import { RegisterUserResponseDTO } from "./RegisterUserResponseDTO.ts";
+import type { RegisterUserRequestDTO } from "./RegisterUserRequestDTO.ts";
+import type { RegisterUserResponseDTO } from "./RegisterUserResponseDTO.ts";
 
 export class RegisterUserUseCase {
   constructor(
@@ -32,14 +32,11 @@ export class RegisterUserUseCase {
     dto: RegisterUserRequestDTO,
   ): Promise<RegisterUserResponseDTO> {
 
-
-
     const emailExists = await this.userRepository.existsByEmail(dto.email);
 
     if (emailExists) {
       throw new EmailAlreadyExistsError(dto.email);
     }
-
 
 
     const documentExists = await this.userRepository.existsByDocument(
@@ -48,9 +45,8 @@ export class RegisterUserUseCase {
     );
 
     if (documentExists) {
-      throw new DocumentAlreadyExistsError(dto.document.number);
+      throw new DocumentAlreadyExistsError(dto.document.number.toString());
     }
-
 
 
 
@@ -65,6 +61,8 @@ export class RegisterUserUseCase {
       passwordHash,
       firstName: dto.firstName,
       lastName: dto.lastName,
+      identifierType: dto.document.type,
+      identifierNumber: dto.document.number,
     });
 
 
