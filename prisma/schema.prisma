@@ -37,7 +37,7 @@ model User {
   lastName         String     @map("last_name")
 
   identifierType   String     @map("identifier_type")
-  identifierNumber String     @map("identifier_number")
+  identifierNumber Int     @map("identifier_number")
 
   role             UserRole   @default(USER)
   status           UserStatus @default(ACTIVE)
