@@ -22,4 +22,15 @@ export const registerUserSchema = z.object({
     .string()
     .min(8, "Password must contain at least 8 characters")
     .max(72),
+
+  document: z.object({
+    type: z
+      .string()
+      .trim()
+      .min(1, "Document type is required")
+      .max(50),
+    number: z
+      .int()
+      .min(1, "Document number is required")
+  }),
 });
