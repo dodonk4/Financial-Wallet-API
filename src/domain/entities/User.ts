@@ -9,6 +9,8 @@ export interface UserProps {
   lastName: string;
   role: UserRole;
   status: UserStatus;
+  identifierType: string;
+  identifierNumber: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +24,8 @@ export class User {
     passwordHash: string;
     firstName: string;
     lastName: string;
+    identifierType: string;
+    identifierNumber: number;
   }): User {
     return new User({
       ...props,
@@ -63,4 +67,17 @@ export class User {
   get updatedAt() {
     return this.props.updatedAt;
   }
+
+  get passwordHash() {
+    return this.props.passwordHash;
+  }
+  
+  get identifierType() {
+    return this.props.identifierType;
+  }
+
+  get identifierNumber() {
+    return this.props.identifierNumber;
+  }
+
 }
