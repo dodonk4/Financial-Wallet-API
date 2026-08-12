@@ -36,6 +36,10 @@ export class User {
     });
   }
 
+  static reconstitute(props: UserProps): User {
+    return new User(props);
+  }
+
   get id() {
     return this.props.id;
   }
