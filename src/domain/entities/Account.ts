@@ -5,7 +5,8 @@ export interface AccountProps {
   id: string;
   userId: string;
   currency: Currency;
-  balance: number;
+  balanceCache: number;
+  heldBalance: number;
   status: AccountStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -24,7 +25,8 @@ export class Account {
 
     return new Account({
       ...props,
-      balance: 0,
+      balanceCache: 0,
+      heldBalance: 0,
       status: AccountStatus.ACTIVE,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -44,8 +46,12 @@ export class Account {
     return this.props.userId;
   }
 
-  get balance() {
-    return this.props.balance;
+  get balanceCache() {
+    return this.props.balanceCache;
+  }
+
+  get heldBalance() {
+    return this.props.heldBalance;
   }
 
   get currency() {

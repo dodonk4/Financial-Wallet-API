@@ -13,7 +13,7 @@ export interface RegisterUserResponseDTO {
   account: {
     id: string;
     currency: Currency;
-    balance: number;
+    heldBalance: number;
   };
 
   accessToken: string;

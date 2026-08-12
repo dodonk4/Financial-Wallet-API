@@ -122,7 +122,7 @@ export class RegisterUserUseCase {
       account: {
         id: account.id,
         currency: account.currency,
-        balance: account.balance
+        heldBalance: account.heldBalance
       },
       accessToken: tokens.accessToken,
       refreshToken: refreshToken.token
