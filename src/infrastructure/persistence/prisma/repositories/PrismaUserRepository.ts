@@ -32,7 +32,7 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async create(user: User): Promise<User> {
-    const createdUser = await this.prisma.user.create({
+    const prismaCreatedUser = await this.prisma.user.create({
       data: {
         id: user.id,
         firstName: user.firstName,
@@ -45,17 +45,17 @@ export class PrismaUserRepository implements IUserRepository {
       },
     });
 
-    const newCreatedUser = User.create({
-      id: createdUser.id,
-      email: createdUser.email,
-      passwordHash: createdUser.passwordHash,
-      firstName: createdUser.firstName,
-      lastName: createdUser.lastName,
-      identifierType: createdUser.identifierType,
-      identifierNumber: createdUser.identifierNumber,
+    const createdUser = User.create({
+      id: prismaCreatedUser.id,
+      email: prismaCreatedUser.email,
+      passwordHash: prismaCreatedUser.passwordHash,
+      firstName: prismaCreatedUser.firstName,
+      lastName: prismaCreatedUser.lastName,
+      identifierType: prismaCreatedUser.identifierType,
+      identifierNumber: prismaCreatedUser.identifierNumber,
     })
 
-    return newCreatedUser;
+    return createdUser;
   }
 
   async findById(id: string): Promise<User | null> {
