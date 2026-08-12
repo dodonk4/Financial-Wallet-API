@@ -71,7 +71,7 @@ export class RegisterUserUseCase {
     const account = Account.create({
       id: randomUUID(),
       userId: user.id,
-      currency: Currency.ARG,
+      currency: Currency.ARS,
     });
 
 

@@ -1,5 +1,5 @@
 export const Currency = {
-    ARG: "ARG",
+    ARS: "ARS",
     USD: "USD",
 } as const;
 
