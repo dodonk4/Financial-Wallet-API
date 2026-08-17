@@ -18,6 +18,7 @@ import type { IUnitOfWork } from "../../ports/output/IUnitOfWork.ts";
 
 import type { RegisterUserRequestDTO } from "./RegisterUserRequestDTO.ts";
 import type { RegisterUserResponseDTO } from "./RegisterUserResponseDTO.ts";
+import { ITokenHasher } from "../../ports/output/ITokenHasher.ts";
 
 export class RegisterUserUseCase {
   constructor(
@@ -25,6 +26,7 @@ export class RegisterUserUseCase {
     private readonly passwordHasher: IPasswordHasher,
     private readonly tokenProvider: ITokenServiceProvider,
     private readonly eventPublisher: IEventPublisher,
+    private readonly tokenHasher: ITokenHasher,
     private readonly unitOfWork: IUnitOfWork,
   ) { }
 
@@ -48,11 +50,7 @@ export class RegisterUserUseCase {
       throw new DocumentAlreadyExistsError(dto.document.number.toString());
     }
 
-
-
     const passwordHash = await this.passwordHasher.hash(dto.password);
-
-
 
 
     const user = User.create({
@@ -66,8 +64,6 @@ export class RegisterUserUseCase {
     });
 
 
-
-
     const account = Account.create({
       id: randomUUID(),
       userId: user.id,
@@ -75,20 +71,20 @@ export class RegisterUserUseCase {
     });
 
 
-
-
     const tokens = await this.tokenProvider.generate(user);
+
+    const hashedRefreshToken = await this.tokenHasher.hash(tokens.refreshToken);
 
     const refreshToken = RefreshToken.create({
       id: randomUUID(),
       userId: user.id,
-      token: tokens.refreshToken,
+      familyId: randomUUID(),
+      tokenHash: hashedRefreshToken,
       expiresAt: new Date(
         Date.now() + 1000 * 60 * 60 * 24 * 30,
       ),
+      deviceInfo: null,
     });
-
-
 
 
     await this.unitOfWork.execute(async (repositories) => {
@@ -101,15 +97,9 @@ export class RegisterUserUseCase {
 
     });
 
-
-
-
     await this.eventPublisher.publish(
       new UserRegisteredEvent(user.id, user.email),
     );
-
-
-
 
     return {
       user: {
