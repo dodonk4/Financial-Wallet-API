@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client.ts";
 import { IUserRepository } from "../../../../application/ports/output/IUserRepository.ts";
 import { User } from "../../../../domain/entities/User.ts";
+import { UserNotFound } from "../../../../domain/errors/UserNotFoundError.ts";
 
 export class PrismaUserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaClient | Prisma.TransactionClient) { }
@@ -59,7 +60,27 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
 
+    if(!user){
+      throw new UserNotFound();
+    }
+
+    const userToReturn = User.reconstitute(user);
+
+    return userToReturn;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if(!user){
+      throw new UserNotFound();
+    }
+
+    const userToReturn = User.reconstitute(user);
+
+    return userToReturn;
   }
 
 }
