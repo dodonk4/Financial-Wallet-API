@@ -16,6 +16,8 @@ import { UserController } from "./interfaces/http/controllers/entities/UserContr
 import { createUserRouter } from "./interfaces/http/routes/user.routes.ts";
 import { prisma } from "./infrastructure/database/prisma.ts";
 import healthRouter from "./interfaces/http/routes/health.routes.ts";
+import { LoginUseCase } from "./application/use-cases/auth/login/LoginUseCase.ts";
+import { SHA256Hasher } from "./infrastructure/security/SHA256Hasher.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -23,6 +25,8 @@ const userRepository = new PrismaUserRepository(prisma);
 const passwordHasher = new Argon2PasswordHasher();
 
 const tokenProvider = new JwtTokenProvider();
+
+const tokenHasher = new SHA256Hasher();
 
 const eventPublisher = new NodeEventPublisher();
 
@@ -36,8 +40,18 @@ const registerUserUseCase = new RegisterUserUseCase(
   unitOfWork,
 );
 
+const loginUseCase = new LoginUseCase(
+  userRepository,
+  eventPublisher,
+  tokenProvider,
+  passwordHasher,
+  tokenHasher,
+  unitOfWork
+)
+
 const userController = new UserController(
   registerUserUseCase,
+  loginUseCase
 );
 
 const userRouter = createUserRouter(
