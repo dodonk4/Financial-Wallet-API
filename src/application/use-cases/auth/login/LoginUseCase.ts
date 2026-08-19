@@ -11,6 +11,7 @@ import { IUserRepository } from "../../../ports/output/IUserRepository.ts";
 import { LoginRequestDTO } from "./LoginRequestDTO.ts";
 import { LoginResponseDTO } from "./LoginResponseDTO.ts";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher.ts";
+import { userLoggedEvent } from "../../../../domain/events/UserLoggedEvent.ts";
 
 export class LoginUseCase {
     constructor(
@@ -26,19 +27,19 @@ export class LoginUseCase {
 
         const emailExists = await this.userRepository.existsByEmail(dto.email);
 
-        if(!emailExists){
+        if (!emailExists) {
             throw new InvalidCredentialsError();
         }
 
         const user = await this.userRepository.findByEmail(dto.email);
 
-        if(user?.status != "ACTIVE"){
+        if (user?.status != "ACTIVE") {
             throw new ForbiddenError();
         }
 
         const verifiedPassword = await this.passwordHasher.verify(dto.password, user.passwordHash);
 
-        if(!verifiedPassword){
+        if (!verifiedPassword) {
             throw new InvalidCredentialsError();
         }
 
@@ -60,6 +61,10 @@ export class LoginUseCase {
         await this.unitOfWork.execute(async (repositories) => {
             await repositories.refreshToken.save(refreshToken);
         })
+
+        await this.eventPublisher.publish(
+            new userLoggedEvent(user.id, user.email),
+        );
 
         return {
             user: {
