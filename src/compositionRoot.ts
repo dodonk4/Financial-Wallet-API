@@ -10,7 +10,7 @@ import { JwtTokenProvider } from "./infrastructure/security/JwtTokenProvider.ts"
 
 import { NodeEventPublisher } from "./infrastructure/events/NodeEventPublisher.ts";
 
-import { RegisterUserUseCase } from "./application/use-cases/auth/RegisterUserUseCase.ts";
+import { RegisterUserUseCase } from "./application/use-cases/auth/register/RegisterUserUseCase.ts";
 
 import { UserController } from "./interfaces/http/controllers/entities/UserController.ts";
 import { createUserRouter } from "./interfaces/http/routes/user.routes.ts";
