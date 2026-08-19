@@ -12,9 +12,7 @@ export class PrismaAccountRepository implements IAccountRepository {
       data: {
         id: account.id,
         userId: account.userId,
-        balance: account.balance,
         currency: account.currency,
-        status: account.status,
       },
     });
 
