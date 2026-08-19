@@ -2,8 +2,6 @@ import { EventEmitter } from "node:events";
 
 import type { DomainEvent } from "../../domain/events/DomainEvent";
 import { IEventPublisher } from "../../application/ports/output/IEventPublisher";
-// import type { IEventHandler } from "./IEventHandler";
-// import type { IEventPublisher } from "./IEventPublisher";
 
 //I define the handler here. The project doesn't need the complexity of having several handlers types
 type EventHandler<T extends DomainEvent> =
