@@ -82,10 +82,12 @@ export class RegisterUserUseCase {
     const refreshToken = RefreshToken.create({
       id: randomUUID(),
       userId: user.id,
-      token: tokens.refreshToken,
+      familyId: randomUUID(),
+      tokenHash: tokens.refreshToken,
       expiresAt: new Date(
         Date.now() + 1000 * 60 * 60 * 24 * 30,
       ),
+      deviceInfo: null,
     });
 
 

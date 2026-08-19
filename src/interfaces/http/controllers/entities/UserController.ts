@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import { RegisterUserRequestDTO } from "../../../../application/use-cases/auth/RegisterUserRequestDTO";
-import { RegisterUserUseCase } from "../../../../application/use-cases/auth/RegisterUserUseCase";
+import { RegisterUserRequestDTO } from "../../../../application/use-cases/auth/register/RegisterUserRequestDTO.ts";
+import { RegisterUserUseCase } from "../../../../application/use-cases/auth/register/RegisterUserUseCase.ts";
 
 export class UserController {
   constructor(
