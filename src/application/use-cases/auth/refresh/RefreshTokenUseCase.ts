@@ -3,25 +3,25 @@ import { RefreshToken } from "../../../../domain/entities/RefreshToken";
 import { NonValidRefreshTokenError } from "../../../../domain/errors/NonValidRefreshTokenError";
 import { RefreshTokenNotFoundError } from "../../../../domain/errors/RefreshTokenNotFoundError";
 import { UserNotFound } from "../../../../domain/errors/UserNotFoundError";
-import { IRefreshTokenRepository } from "../../../ports/output/IRefreshTokenRepository";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
-import { IUserRepository } from "../../../ports/output/IUserRepository";
-import { GeneratedTokens } from "../../../ports/output/token/GeneratedTokens";
 import { RefreshTokenRequestDTO } from "./RefreshTokenRequestDTO";
 import { RefreshTokenResponseDTO } from "./RefreshTokenResponseDTO";
+import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
 
 export class RefreshTokenUseCase {
     constructor(
         private readonly tokenServiceProvider: ITokenServiceProvider,
         private readonly tokenHasher: ITokenHasher,
-        private readonly userRepository: IUserRepository,
-        private readonly refreshTokenRepository: IRefreshTokenRepository,
         private readonly unitOfWork: IUnitOfWork,
     ) { }
 
     async execute(dto: RefreshTokenRequestDTO): Promise<RefreshTokenResponseDTO> {
+
+        if(!dto.authorization){
+            throw new InvalidCredentialsError();
+        }
 
         const newTokens = await this.unitOfWork.execute(async (repositories) => {
 
