@@ -12,12 +12,13 @@ import { NodeEventPublisher } from "./infrastructure/events/NodeEventPublisher.t
 
 import { RegisterUserUseCase } from "./application/use-cases/auth/register/RegisterUserUseCase.ts";
 
-import { UserController } from "./interfaces/http/controllers/entities/UserController.ts";
-import { createUserRouter } from "./interfaces/http/routes/user.routes.ts";
+import { AuthController } from "./interfaces/http/controllers/entities/AuthController.ts";
+import { createAuthRouter } from "./interfaces/http/routes/auth.routes.ts";
 import { prisma } from "./infrastructure/database/prisma.ts";
 import healthRouter from "./interfaces/http/routes/health.routes.ts";
 import { LoginUseCase } from "./application/use-cases/auth/login/LoginUseCase.ts";
 import { SHA256Hasher } from "./infrastructure/security/SHA256Hasher.ts";
+import { RefreshTokenUseCase } from "./application/use-cases/auth/refresh/RefreshTokenUseCase.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -37,6 +38,7 @@ const registerUserUseCase = new RegisterUserUseCase(
   passwordHasher,
   tokenProvider,
   eventPublisher,
+  tokenHasher,
   unitOfWork,
 );
 
@@ -49,16 +51,23 @@ const loginUseCase = new LoginUseCase(
   unitOfWork
 )
 
-const userController = new UserController(
+const refreshTokenUseCase = new RefreshTokenUseCase(
+  tokenProvider,
+  tokenHasher,
+  unitOfWork
+)
+
+const authController = new AuthController(
   registerUserUseCase,
-  loginUseCase
+  loginUseCase,
+  refreshTokenUseCase
 );
 
-const userRouter = createUserRouter(
-  userController,
+const authRouter = createAuthRouter(
+  authController,
 );
 
-app.use("/users", userRouter);
+app.use("/auth", authRouter);
 app.use("/health", healthRouter);
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Financial Wallet API' });
@@ -73,6 +82,6 @@ export {
   eventPublisher,
   unitOfWork,
   registerUserUseCase,
-  userController,
-  userRouter,
+  authController,
+  authRouter,
 };
