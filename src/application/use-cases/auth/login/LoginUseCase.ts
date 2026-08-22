@@ -47,12 +47,12 @@ export class LoginUseCase {
 
         const tokens = await this.tokenProvider.generate(userTransformed);
 
-        const hashedToken = await this.tokenHasher.hash(tokens.refreshToken);
+        const tokenHash = await this.tokenHasher.hash(tokens.refreshToken);
 
         const refreshToken = RefreshToken.create({
             id: randomUUID(),
             userId: userTransformed.id,
-            tokenHash: hashedToken,
+            tokenHash,
             familyId: randomUUID(),
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             deviceInfo: null,
