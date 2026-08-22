@@ -18,6 +18,7 @@ import type { IUnitOfWork } from "../../../ports/output/IUnitOfWork.ts";
 
 import type { RegisterUserRequestDTO } from "./RegisterUserRequestDTO.ts";
 import type { RegisterUserResponseDTO } from "./RegisterUserResponseDTO.ts";
+import { ITokenHasher } from "../../../ports/output/ITokenHasher.ts";
 
 export class RegisterUserUseCase {
   constructor(
@@ -25,6 +26,7 @@ export class RegisterUserUseCase {
     private readonly passwordHasher: IPasswordHasher,
     private readonly tokenProvider: ITokenServiceProvider,
     private readonly eventPublisher: IEventPublisher,
+    private readonly tokenHasher: ITokenHasher,
     private readonly unitOfWork: IUnitOfWork,
   ) { }
 
@@ -38,7 +40,6 @@ export class RegisterUserUseCase {
       throw new EmailAlreadyExistsError(dto.email);
     }
 
-
     const documentExists = await this.userRepository.existsByDocument(
       dto.document.type,
       dto.document.number,
@@ -48,12 +49,7 @@ export class RegisterUserUseCase {
       throw new DocumentAlreadyExistsError(dto.document.number.toString());
     }
 
-
-
     const passwordHash = await this.passwordHasher.hash(dto.password);
-
-
-
 
     const user = User.create({
       id: randomUUID(),
@@ -65,9 +61,6 @@ export class RegisterUserUseCase {
       identifierNumber: dto.document.number,
     });
 
-
-
-
     const account = Account.create({
       id: randomUUID(),
       userId: user.id,
@@ -75,22 +68,20 @@ export class RegisterUserUseCase {
     });
 
 
-
-
     const tokens = await this.tokenProvider.generate(user);
+
+    const tokenHash = await this.tokenHasher.hash(tokens.refreshToken);
 
     const refreshToken = RefreshToken.create({
       id: randomUUID(),
       userId: user.id,
       familyId: randomUUID(),
-      tokenHash: tokens.refreshToken,
+      tokenHash,
       expiresAt: new Date(
         Date.now() + 1000 * 60 * 60 * 24 * 30,
       ),
       deviceInfo: null,
     });
-
-
 
 
     await this.unitOfWork.execute(async (repositories) => {
@@ -104,14 +95,9 @@ export class RegisterUserUseCase {
     });
 
 
-
-
     await this.eventPublisher.publish(
       new UserRegisteredEvent(user.id, user.email),
     );
-
-
-
 
     return {
       user: {
@@ -127,7 +113,7 @@ export class RegisterUserUseCase {
         heldBalance: account.heldBalance
       },
       accessToken: tokens.accessToken,
-      refreshToken: refreshToken.token
+      refreshToken: tokens.refreshToken,
     };
   }
 }
