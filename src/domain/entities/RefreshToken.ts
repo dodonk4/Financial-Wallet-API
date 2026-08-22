@@ -6,7 +6,7 @@ export interface RefreshTokenProps {
   used: boolean;
   revoked: boolean;
   expiresAt: Date;
-  deviceInfo: String | null;
+  deviceInfo: string | null;
   createdAt: Date;
 }
 
@@ -21,7 +21,7 @@ export class RefreshToken {
     tokenHash: string;
     familyId: string;
     expiresAt: Date;
-    deviceInfo: String | null;
+    deviceInfo: string | null;
   }): RefreshToken {
 
     return new RefreshToken({
@@ -33,7 +33,7 @@ export class RefreshToken {
 
   }
 
-  static restore(props: RefreshTokenProps): RefreshToken {
+  static reconstitute(props: RefreshTokenProps): RefreshToken {
     return new RefreshToken(props);
   }
 
@@ -45,7 +45,7 @@ export class RefreshToken {
     return this.props.userId;
   }
 
-  get token() {
+  get tokenHash() {
     return this.props.tokenHash;
   }
 
