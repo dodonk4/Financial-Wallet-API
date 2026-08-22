@@ -5,7 +5,6 @@ import { ITokenServiceProvider } from "../../application/ports/output/ITokenServ
 import { GeneratedTokens } from "../../application/ports/output/token/GeneratedTokens.ts";
 import { AccessTokenPayload } from "../../application/ports/output/token/AccessTokenPayload.ts";
 import { RefreshTokenPayload } from "../../application/ports/output/token/RefreshTokenPayload.ts";
-import { Prisma, PrismaClient } from "../../../generated/prisma/client.ts";
 
 export class JwtTokenProvider implements ITokenServiceProvider {
     async generate(user: User): Promise<GeneratedTokens> {
