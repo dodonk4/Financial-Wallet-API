@@ -34,7 +34,7 @@ export class Account {
 
   }
 
-  static restore(props: AccountProps): Account {
+  static reconstitute(props: AccountProps): Account {
     return new Account(props);
   }
 
