@@ -9,5 +9,7 @@ export interface IRefreshTokenRepository {
 
   findByTokenHash(tokenHash: string): Promise<RefreshToken | null>;
 
+  revoke(id: string): Promise<void>;
+
   revokeManyByFamilyId(familyId: string): Promise<void>;
 }
