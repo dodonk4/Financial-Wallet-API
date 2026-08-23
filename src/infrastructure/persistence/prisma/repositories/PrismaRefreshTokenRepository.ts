@@ -56,6 +56,15 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
         return refreshTokenToReturn;
     }
 
+    async revoke(id: string): Promise<void> {
+        await this.prisma.refreshToken.updateMany({
+            where: { id },
+            data: {
+                revoked: true,
+            }
+        })
+    }
+
     async revokeManyByFamilyId(familyId: string): Promise<void> {
         await this.prisma.refreshToken.updateMany({
             where: { familyId },
@@ -64,5 +73,6 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
             }
         })
     }
+
 
 }
