@@ -26,5 +26,15 @@ export const createAuthRouter = (
     authController.refresh,
   )
 
+  router.post(
+    "/logout",
+    authController.logout,
+  )
+
+  router.post(
+    "/logout",
+    authController.logoutAll,
+  )
+
   return router;
 };
