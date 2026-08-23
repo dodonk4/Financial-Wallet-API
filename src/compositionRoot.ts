@@ -19,6 +19,8 @@ import healthRouter from "./interfaces/http/routes/health.routes.ts";
 import { LoginUseCase } from "./application/use-cases/auth/login/LoginUseCase.ts";
 import { SHA256Hasher } from "./infrastructure/security/SHA256Hasher.ts";
 import { RefreshTokenUseCase } from "./application/use-cases/auth/refresh/RefreshTokenUseCase.ts";
+import { LogoutUseCase } from "./application/use-cases/auth/logout/LogoutUseCase.ts";
+import { LogoutAllUseCase } from "./application/use-cases/auth/logout/LogoutAllUseCase.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -57,10 +59,22 @@ const refreshTokenUseCase = new RefreshTokenUseCase(
   unitOfWork
 )
 
+const logoutUseCase = new LogoutUseCase(
+  unitOfWork,
+  tokenHasher,
+)
+
+const logoutAllUseCase = new LogoutAllUseCase(
+  unitOfWork,
+  tokenHasher,
+)
+
 const authController = new AuthController(
   registerUserUseCase,
   loginUseCase,
-  refreshTokenUseCase
+  refreshTokenUseCase,
+  logoutUseCase,
+  logoutAllUseCase
 );
 
 const authRouter = createAuthRouter(
