@@ -6,12 +6,17 @@ import { LoginRequestDTO } from "../../../../application/use-cases/auth/login/Lo
 import { LoginUseCase } from "../../../../application/use-cases/auth/login/LoginUseCase.ts";
 import { RefreshTokenUseCase } from "../../../../application/use-cases/auth/refresh/RefreshTokenUseCase.ts";
 import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError.ts";
+import { LogoutUseCase } from "../../../../application/use-cases/auth/logout/LogoutUseCase.ts";
+import { LogoutAllUseCase } from "../../../../application/use-cases/auth/logout/LogoutAllUseCase.ts";
+import extractToken from "../../auth/extractToken.ts";
 
 export class AuthController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly logoutUseCase: LogoutUseCase,
+    private readonly logoutAllUseCase: LogoutAllUseCase,
   ) { }
 
   register = async (
@@ -38,19 +43,34 @@ export class AuthController {
     next: NextFunction,
   ): Promise<void> => {
 
-    const authorization = req.headers.authorization;
-
-    if (!authorization) {
-      throw new InvalidCredentialsError();
-    }
-
-    const [bearer, token] = authorization.split(" ");
-
-    if (bearer !== "Bearer" || !token) {
-        throw new InvalidCredentialsError();
-    }
+    const token = extractToken(req.headers.authorization);
 
     const result = await this.refreshTokenUseCase.execute({ authorization: token });
     res.status(201).json(result);
   }
+
+  logout = async (
+    req: Request<unknown, unknown, unknown>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+
+    const token = extractToken(req.headers.authorization);
+
+    await this.logoutUseCase.execute({ authorization: token });
+    res.status(200);
+  }
+
+  logoutAll = async (
+    req: Request<unknown, unknown, unknown>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+
+    const token = extractToken(req.headers.authorization);
+
+    await this.logoutAllUseCase.execute({ authorization: token });
+    res.status(200);
+  }
+
 }
