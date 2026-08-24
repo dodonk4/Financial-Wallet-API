@@ -58,7 +58,10 @@ export class AuthController {
     const token = extractToken(req.headers.authorization);
 
     await this.logoutUseCase.execute({ authorization: token });
-    res.status(200);
+
+    console.log("It lands after logoutUseCase");
+
+    res.status(200).send();
   }
 
   logoutAll = async (
@@ -70,7 +73,7 @@ export class AuthController {
     const token = extractToken(req.headers.authorization);
 
     await this.logoutAllUseCase.execute({ authorization: token });
-    res.status(200);
+    res.status(200).send();
   }
 
 }
