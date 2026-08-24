@@ -32,7 +32,7 @@ export const createAuthRouter = (
   )
 
   router.post(
-    "/logout",
+    "/logout-all",
     authController.logoutAll,
   )
 
