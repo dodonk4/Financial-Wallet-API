@@ -1,4 +1,5 @@
 import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
+import { RefreshTokenAlreadyRevokedError } from "../../../../domain/errors/RefreshTokenAlreadyRevokedError";
 import { RefreshTokenNotFoundError } from "../../../../domain/errors/RefreshTokenNotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
@@ -10,7 +11,7 @@ export class LogoutUseCase {
         private readonly tokenHasher: ITokenHasher,
     ) { }
 
-    async execute(dto: LogoutRequestDTO) {
+    async execute(dto: LogoutRequestDTO) {    
 
         if (!dto.authorization) {
             throw new InvalidCredentialsError();
@@ -23,6 +24,10 @@ export class LogoutUseCase {
 
             if (!refreshTokenToRevoke) {
                 throw new RefreshTokenNotFoundError();
+            }
+
+            if(refreshTokenToRevoke.revoked === true){
+                throw new RefreshTokenAlreadyRevokedError();
             }
 
             await repositories.refreshToken.revoke(refreshTokenToRevoke.id);

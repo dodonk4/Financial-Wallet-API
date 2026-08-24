@@ -1,4 +1,5 @@
 import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
+import { RefreshTokenAlreadyRevokedError } from "../../../../domain/errors/RefreshTokenAlreadyRevokedError";
 import { RefreshTokenNotFoundError } from "../../../../domain/errors/RefreshTokenNotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
@@ -25,7 +26,14 @@ export class LogoutAllUseCase {
                 throw new RefreshTokenNotFoundError();
             }
 
-            await repositories.refreshToken.revokeManyByFamilyId(refreshTokenToRevoke.familyId);
+            console.log(refreshTokenToRevoke.familyId);
+
+            const rowsAffected: { count: number } = await repositories.refreshToken.revokeManyByFamilyId(refreshTokenToRevoke.familyId);
+
+            if(!rowsAffected.count){
+                throw new RefreshTokenAlreadyRevokedError();
+            }
+
 
         })
     }
