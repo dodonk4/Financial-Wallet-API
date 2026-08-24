@@ -11,5 +11,5 @@ export interface IRefreshTokenRepository {
 
   revoke(id: string): Promise<void>;
 
-  revokeManyByFamilyId(familyId: string): Promise<void>;
+  revokeManyByFamilyId(familyId: string): Promise<{count: number}>;
 }

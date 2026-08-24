@@ -45,6 +45,7 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
     }
 
     async findByTokenHash(tokenHash: string): Promise<RefreshToken | null> {
+        
         const refreshToken = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
 
         if (!refreshToken) {
@@ -65,9 +66,9 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
         })
     }
 
-    async revokeManyByFamilyId(familyId: string): Promise<void> {
-        await this.prisma.refreshToken.updateMany({
-            where: { familyId },
+    async revokeManyByFamilyId(familyId: string): Promise<{count: number}> {
+        return await this.prisma.refreshToken.updateMany({
+            where: { familyId, revoked: false },
             data: {
                 revoked: true,
             }
