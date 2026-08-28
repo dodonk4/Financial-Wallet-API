@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../../src/app";
+import { app } from "../../src/compositionRoot";
 import { prisma } from '../../src/infrastructure/database/prisma';
 import { redisClient } from '../../src/infrastructure/cache/redisClient';
 
