@@ -2,10 +2,9 @@ import request from "supertest";
 import { app } from "../../tests/compositionRootTest";
 import { prisma } from '../../src/infrastructure/database/prisma';
 import { redisClient } from '../../src/infrastructure/cache/redisClient';
-
+import { RegisterUserResponseDTO } from "../../src/application/use-cases/auth/register/RegisterUserResponseDTO";
 
 describe("Register endpoints", () => {
-
 
     describe("POST /register", () => {
         it("should return 201 and the usar registered", async () => {
@@ -49,7 +48,7 @@ describe("Register endpoints", () => {
                 .post("/auth/register").
                 send({
                     firstName: "Miguel",
-                    lastName: 1234,
+                    lastName: "Castillo",
                     email: "email.registered@mock.com",
                     password: "abcd1234",
                     document: {
@@ -61,6 +60,27 @@ describe("Register endpoints", () => {
             expect(response.status).toBe(409);
 
         });
+
+        it("should return 409 if the document number is already registered", async () => {
+            const response = await request(app)
+                .post("/auth/register").
+                send({
+                    firstName: "Miguel",
+                    lastName: "Castillo",
+                    email: "email.not.registered@mock.com",
+                    password: "abcd1234",
+                    document: {
+                        type: "DNI",
+                        number: 11111111,
+                    },
+                });
+
+            expect(response.status).toBe(409);
+
+        });
+
+        //Pending error test: user is underage
+
     })
 
     afterAll(async () => {
