@@ -1,5 +1,5 @@
 
-import app from "./app.ts";
+import app from "./appConsistent.ts";
 import { Response, Request } from "express";
 
 import { PrismaUserRepository } from "./infrastructure/persistence/prisma/repositories/PrismaUserRepository.ts";
