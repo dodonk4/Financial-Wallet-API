@@ -7,7 +7,7 @@ import { RegisterUserResponseDTO } from "../../src/application/use-cases/auth/re
 describe("Register endpoints", () => {
 
     describe("POST /register", () => {
-        it("should return 201 and the usar registered", async () => {
+        it("should return 201 and the user registered", async () => {
             const response = await request(app)
                 .post("/auth/register").
                 send({
