@@ -21,6 +21,7 @@ import { RefreshTokenUseCase } from "./../src/application/use-cases/auth/refresh
 import { LogoutUseCase } from "./../src/application/use-cases/auth/logout/LogoutUseCase.ts";
 import { LogoutAllUseCase } from "./../src/application/use-cases/auth/logout/LogoutAllUseCase.ts";
 import { PrismaTestUnitOfWork } from "../src/infrastructure/persistence/prisma/repositories/PrismaTestUnitOfWork.ts";
+import errorHandler from "../src/interfaces/http/middlewares/errorHandler.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -86,6 +87,8 @@ app.use("/health", healthRouter);
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Financial Wallet API' });
 });
+
+app.use(errorHandler);
 
 export {
   app,
