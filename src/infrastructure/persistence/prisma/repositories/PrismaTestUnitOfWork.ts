@@ -23,6 +23,10 @@ export class PrismaTestUnitOfWork implements IUnitOfWork {
 
     prismaService = prismaTestingHelper.getProxyClient();
 
+    //There's an issue with this line. Is not supposed to do a rollback if I
+    //don't call "prismaTestingHelper?.rollbackCurrentTransaction()" after each test.
+    //BUT IT DOES. It works just fine without it.
+    //I still have to find why
     await prismaTestingHelper.startNewTransaction();
 
     return prismaService.$transaction(async (tx) => {
@@ -34,9 +38,9 @@ export class PrismaTestUnitOfWork implements IUnitOfWork {
 
       const callbackReturn = callback(repositories);
 
-      prismaTestingHelper?.rollbackCurrentTransaction;
-
       return callbackReturn;
     });
   }
 }
+
+export { prismaTestingHelper }

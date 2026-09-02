@@ -2,7 +2,8 @@ import request from "supertest";
 import { app } from "../../tests/compositionRootTest";
 import { prisma } from '../../src/infrastructure/database/prisma';
 import { redisClient } from '../../src/infrastructure/cache/redisClient';
-import { RegisterUserResponseDTO } from "../../src/application/use-cases/auth/register/RegisterUserResponseDTO";
+// import { randomInt } from "node:crypto";
+// import { prismaTestingHelper } from "../../src/infrastructure/persistence/prisma/repositories/PrismaTestUnitOfWork";
 
 describe("Register endpoints", () => {
 
@@ -79,9 +80,36 @@ describe("Register endpoints", () => {
 
         });
 
-        //Pending error test: user is underage
+        //**This commented test is for testing an issue that I see within the library
+        //**of transacional-prisma-testing.
+        //**It's just to check if a created user does a rollback or not
+
+        // it("peristency check", async () => {
+        //     const response = await request(app)
+        //         .post("/auth/register").
+        //         send({
+        //             firstName: "Persistency",
+        //             lastName: "Persistency",
+        //             email: `${randomInt(8)}@mock.com`,
+        //             password: "abcd1234",
+        //             document: {
+        //                 type: "DNI",
+        //                 number: randomInt(8),
+        //             },
+        //         });
+        // });
+
+        //**Pending error test: user is underage
 
     })
+
+    //**This should be the function called to do the rollback with prismaTestingHelper.
+    //**But, apparently, it works fine withou it.
+    //**More details in src\infrastructure\persistence\prisma\repositories\PrismaTestUnitOfWork.ts
+
+    // afterEach(async () => {
+    //     prismaTestingHelper?.rollbackCurrentTransaction();
+    // })
 
     afterAll(async () => {
         await prisma.$disconnect();
