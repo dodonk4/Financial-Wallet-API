@@ -31,7 +31,7 @@ describe("Logout endpoints", () => {
     });
 
     afterAll(async () => {
-        await prisma.$disconnect(),
-        await redisClient.quit()
+        await prisma.$disconnect();
+        await redisClient.quit();
     })
 })
