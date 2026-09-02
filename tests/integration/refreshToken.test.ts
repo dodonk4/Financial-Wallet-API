@@ -34,7 +34,31 @@ describe("Refresh token endpoints", () => {
         auth("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30", { type: "bearer" });
 
         expect(response.status).toBe(401);
-    })
+    });
+
+    it("should return 401 if the refreshToken is expired", async () => {
+        const response = await request(appNonPersistent).
+        post("/auth/refresh").
+        auth("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjowfQ.bWrsC3CVWfeH2m0QQfBMQFQxcAHRGDH6RaCCvXeCEx8", { type: "bearer" });
+
+        expect(response.status).toBe(401);
+    });
+
+    it("should return 401 if the refreshToken is revoked", async () => {
+        const response = await request(appNonPersistent).
+        post("/auth/refresh").
+        auth("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MzFjYjg2Mi1iMDY3LTRmZWQtYTRmOS04Mjc5NDBlODNhOWUifQ.DOIj5GEQ39wtwDUt8hUd8BBmfAqSaRTj8ZwednatiZc", { type: "bearer" });
+
+        expect(response.status).toBe(401);
+    });
+
+    it("should return 401 if the refreshToken has been already used", async () => {
+        const response = await request(appNonPersistent).
+        post("/auth/refresh").
+        auth("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MzFjYjg2Mi1iMDY3LTRmZWQtYTRmOS04Mjc5NDBlODNhOWUiLCJuYW1lIjoic29tZXRoaW5nIn0.hRp4jes89PSTUSJDiJK1vdcJdO9PD9Y1GzEdRmpeMtg", { type: "bearer" });
+
+        expect(response.status).toBe(401);
+    });
 
     afterAll(async () => {
         await prisma.$disconnect();
