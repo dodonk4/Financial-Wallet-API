@@ -54,8 +54,6 @@ export class AuthController {
 
     await this.logoutUseCase.execute({ authorization: token });
 
-    console.log("It lands after logoutUseCase");
-
     res.status(200).send();
   }
 
