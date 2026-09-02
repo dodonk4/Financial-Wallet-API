@@ -7,7 +7,6 @@ import { redisClient } from '../../src/infrastructure/cache/redisClient';
 
 describe("Register endpoints", () => {
 
-    describe("POST /register", () => {
         it("should return 201 and the user registered", async () => {
             const response = await request(app)
                 .post("/auth/register").
@@ -100,8 +99,6 @@ describe("Register endpoints", () => {
         // });
 
         //**Pending error test: user is underage
-
-    })
 
     //**This should be the function called to do the rollback with prismaTestingHelper.
     //**But, apparently, it works fine withou it.
