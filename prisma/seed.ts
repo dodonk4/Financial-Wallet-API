@@ -43,7 +43,7 @@ async function main() {
             revoked: true,
             expiresAt: new Date(),
         }
-    })
+    });
 
     const _usedToken = await prisma.refreshToken.upsert({
         where: { tokenHash: "c1190ffa5aa4037d9578199974073175e25cc6b93fdc46a2e2e276fa29a72942" },
@@ -56,7 +56,19 @@ async function main() {
             used: true,
             expiresAt: new Date(),
         }
-    })
+    });
+
+    const _tokenForLogout = await prisma.refreshToken.upsert({
+        where: { tokenHash: "23205a2f4bbf529a0871ab8f094e63b673fee97d6c0c73623f0eb9faecdfb124" },
+        update: {},
+        create: {
+            userId: "931cb862-b067-4fed-a4f9-827940e83a9e",
+            tokenHash: "23205a2f4bbf529a0871ab8f094e63b673fee97d6c0c73623f0eb9faecdfb124",
+            //Manual used tokenHash
+            familyId: randomUUID(),
+            expiresAt: new Date(),
+        }
+    });
 
 
 }
