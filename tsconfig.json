@@ -53,6 +53,6 @@
     
 
   },
-  "include": ["src/**/*", "jest.config.ts", "prisma.config.ts", "tests/**/*"],
+  "include": ["src/**/*", "jest.config.ts", "prisma.config.ts", "tests/**/*", "prisma/seed.ts"],
   "exclude": ["node_modules", "dist"]
 }

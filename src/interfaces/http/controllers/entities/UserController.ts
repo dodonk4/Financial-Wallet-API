@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
 import { RegisterUserRequestDTO } from "../../../../application/use-cases/auth/register/RegisterUserRequestDTO.ts";
 import { RegisterUserUseCase } from "../../../../application/use-cases/auth/register/RegisterUserUseCase.ts";
@@ -14,7 +14,6 @@ export class UserController {
   register = async (
     req: Request<unknown, unknown, RegisterUserRequestDTO>,
     res: Response,
-    next: NextFunction,
   ): Promise<void> => {
       const result = await this.registerUserUseCase.execute(req.body);
       res.status(201).json(result);
@@ -23,7 +22,6 @@ export class UserController {
   login = async (
     req: Request<unknown, unknown, LoginRequestDTO>,
     res: Response,
-    next: NextFunction,
   ): Promise <void> => {
     const result = await this.loginUseCase.execute(req.body);
     res.status(201).json(result);

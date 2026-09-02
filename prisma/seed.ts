@@ -3,7 +3,7 @@ import { prisma } from "../src/infrastructure/database/prisma"
 
 async function main() {
 
-    const correctUser = await prisma.user.upsert({
+    const _correctUser = await prisma.user.upsert({
         where: { email: "correct.user@mock.com" },
         update: {},
         create: {
@@ -19,7 +19,7 @@ async function main() {
         }
     });
 
-    const userAlreadyRegistered = await prisma.user.upsert({
+    const _userAlreadyRegistered = await prisma.user.upsert({
         where: { email: "email.registered@mock.com" },
         update: {},
         create: {
@@ -32,7 +32,7 @@ async function main() {
         }
     });
 
-    const revokedToken = await prisma.refreshToken.upsert({
+    const _revokedToken = await prisma.refreshToken.upsert({
         where: { tokenHash: "ac4da12bf165dd1d26b59125cf5976ff4a8ca17f7c085f804d97b18f891ec6cb" },
         update: {},
         create: {
@@ -45,7 +45,7 @@ async function main() {
         }
     })
 
-    const usedToken = await prisma.refreshToken.upsert({
+    const _usedToken = await prisma.refreshToken.upsert({
         where: { tokenHash: "c1190ffa5aa4037d9578199974073175e25cc6b93fdc46a2e2e276fa29a72942" },
         update: {},
         create: {
