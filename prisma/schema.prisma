@@ -4,15 +4,16 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider        = "prisma-client"
+  previewFeatures = ["partialIndexes"]
+  output          = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model HealthCheck{
+model HealthCheck {
   id Int @id @default(autoincrement())
 }
 
@@ -28,24 +29,24 @@ enum UserStatus {
 }
 
 model User {
-  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  email            String     @unique
-  passwordHash     String     @map("password_hash")
+  email        String @unique @db.VarChar(255)
+  passwordHash String @map("password_hash") @db.VarChar(255)
 
-  firstName        String     @map("first_name")
-  lastName         String     @map("last_name")
+  firstName String @map("first_name") @db.VarChar(100)
+  lastName  String @map("last_name") @db.VarChar(100)
 
-  identifierType   String     @map("identifier_type")
-  identifierNumber Int     @map("identifier_number")
+  identifierType   String @map("identifier_type") @db.VarChar(20)
+  identifierNumber Int    @map("identifier_number") //Must be changed to VarChar, because there are foreing id's with letters
 
-  role             UserRole   @default(USER)
-  status           UserStatus @default(ACTIVE)
+  role   UserRole   @default(USER)
+  status UserStatus @default(ACTIVE)
 
-  createdAt        DateTime   @default(now()) @map("created_at")
-  updatedAt        DateTime   @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  accounts         Account[]
+  accounts      Account[]
   refreshTokens RefreshToken[]
 
   @@unique([identifierType, identifierNumber], map: "uq_users_identifier")
@@ -64,16 +65,16 @@ enum AccountStatus {
 }
 
 model Account {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId        String   @map("user_id") @db.Uuid
-  currency      Currency
-  balanceCache  Decimal  @default(0.00) @map("balance_cache") @db.Decimal(18, 2)
-  heldBalance   Decimal  @default(0.00) @map("held_balance") @db.Decimal(18, 2)
-  status        AccountStatus @default(ACTIVE)
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String        @map("user_id") @db.Uuid
+  currency     Currency
+  balanceCache Decimal       @default(0.00) @map("balance_cache") @db.Decimal(18, 2)
+  heldBalance  Decimal       @default(0.00) @map("held_balance") @db.Decimal(18, 2)
+  status       AccountStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  user          User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@unique([userId, currency], map: "uq_accounts_user_currency")
   @@index([userId], map: "idx_accounts_user_id")
@@ -83,8 +84,8 @@ model Account {
 model RefreshToken {
   id         String   @id @default(uuid()) @db.Uuid
   userId     String   @db.Uuid
-  tokenHash  String   @unique @map("token_hash")
-  familyId   String   @db.Uuid @map("family_id")
+  tokenHash  String   @unique @map("token_hash") @db.VarChar(255)
+  familyId   String   @map("family_id") @db.Uuid
   used       Boolean  @default(false)
   revoked    Boolean  @default(false)
   expiresAt  DateTime @map("expires_at") @db.Timestamptz
@@ -96,4 +97,37 @@ model RefreshToken {
   @@index([familyId])
   @@index([userId])
   @@map("refresh_tokens")
+}
+
+enum Type {
+  TRANSFER
+  REVERSAL
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+model Transaction {
+  id                   String            @id @default(uuid()) @db.Uuid
+  type                 Type
+  status               TransactionStatus @default(PENDING)
+  amount               Decimal           @db.Decimal(18, 2)
+  currency             Currency
+  idempotencyKey       String            @map("idempotency_key") @db.VarChar(255)
+  relatedTransactionId String?           @unique @map("related_transaction_id") @db.Uuid
+  description          String            @db.VarChar(500)
+  createdAt            DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  completedAt          DateTime          @map("completed_at") @db.Timestamptz
+
+  relatedTransaction Transaction? @relation("RelatedTransaction", fields: [relatedTransactionId], references: [id], onDelete: Restrict)
+  reversal           Transaction? @relation("RelatedTransaction")
+
+  @@index([idempotencyKey])
+  @@index([relatedTransactionId], where: { relatedTransactionId: { not: null } })
+  @@index([status, createdAt])
+  @@map("transactions")
 }
