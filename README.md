@@ -17,8 +17,8 @@ Its goal is to simulate the development of a real-world financial platform by im
 Current areas of focus include:
 
 - ✅ Project infrastructure
-- 🚧 Authentication & Authorization
-- ⏳ Accounts & Wallets
+- ✅ Authentication & Authorization
+- 🚧 Accounts & Wallets
 - ⏳ Transactions
 - ⏳ Real-time notifications
 - ⏳ Background processing
@@ -142,15 +142,3 @@ production-oriented roadmap that includes:
 ## License
 
 This project is intended for educational and portfolio purposes.
-
-## 📅 Development Progress
-
-| Phase | Status |
-|--------|--------|
-| Phase 0 – Project Foundation | ✅ Completed |
-| Phase 1 – Authentication | 🚧 In Progress |
-| Phase 2 – Accounts & Wallets | ⏳ Planned |
-| Phase 3 – Transactions | ⏳ Planned |
-| Phase 4 – Real-time Features | ⏳ Planned |
-| Phase 5 – Background Jobs | ⏳ Planned |
-| Phase 6 – Production Readiness | ⏳ Planned |
