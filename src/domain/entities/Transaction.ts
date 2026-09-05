@@ -8,8 +8,8 @@ export interface TransactionProps {
   amount: number;
   currency: number;
   idempotencyKey: string;
-  relatedTransactionId: string;
-  description: string;
+  relatedTransactionId: string | null;
+  description: string | null;
   createdAt: Date;
   completedAt: Date;
 }
@@ -62,11 +62,11 @@ export class Transaction {
     return this.props.idempotencyKey;
   }
 
-  get relatedTransactionId(): string {
+  get relatedTransactionId(): string | null {
     return this.props.relatedTransactionId;
   }
 
-  get description(): string {
+  get description(): string | null {
     return this.props.description;
   }
 
