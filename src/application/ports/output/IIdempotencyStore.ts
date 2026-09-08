@@ -1,7 +1,15 @@
-import { Transaction } from "../../../domain/entities/Transaction";
+import { Currency } from "../../../domain/entities/Currency"
 
-export interface IIdempotencyStore{
-    saveIdempotencyKey(idempotencyKey: string, payload: Transaction): Promise<string>
+export interface TransactionPayload {
+    originAccountId: string,
+    destinyAccountId: string,
+    amount: number,
+    currency: Currency,
+    description: string | null,
+}
 
-    searchIdempotencyKey(idempotencyKey: string): Promise<Transaction>
+export interface IIdempotencyStore {
+    saveIdempotencyKey(idempotencyKey: string, payload: TransactionPayload): Promise<string>
+
+    searchIdempotencyKey(idempotencyKey: string): Promise<string>
 }
