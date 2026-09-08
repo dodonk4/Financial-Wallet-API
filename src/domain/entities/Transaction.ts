@@ -1,3 +1,4 @@
+import { Currency } from "./Currency";
 import { TransactionStatus } from "./TransactionStatus";
 import { TransactionType } from "./TransactionType";
 
@@ -6,7 +7,7 @@ export interface TransactionProps {
   type: TransactionType;
   status: TransactionStatus;
   amount: number;
-  currency: number;
+  currency: Currency;
   idempotencyKey: string;
   relatedTransactionId: string | null;
   description: string | null;
@@ -21,10 +22,10 @@ export class Transaction {
     id: string,
     type: TransactionType;
     amount: number;
-    currency: number;
+    currency: Currency;
     idempotencyKey: string;
     relatedTransactionId: string;
-    description: string;
+    description: string | null;
   }): Transaction {
     return new Transaction({
       ...props,
@@ -54,7 +55,7 @@ export class Transaction {
     return this.props.amount;
   }
 
-  get currency(): number {
+  get currency(): Currency {
     return this.props.currency;
   }
 
