@@ -1,9 +1,11 @@
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client";
 import { ITransactionRepository } from "../../../../application/ports/output/ITransactionRepository";
 import { Transaction } from "../../../../domain/entities/Transaction";
+import { TransactionNotFound } from "../../../../domain/errors/404/TransactionNotFoundError";
+import { TransactionStatus } from "../../../../domain/entities/TransactionStatus";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
-    private constructor(private readonly prisma: PrismaClient | Prisma.TransactionClient) { }
+    constructor(private readonly prisma: PrismaClient | Prisma.TransactionClient) { }
 
     async create(transaction: Transaction): Promise<Transaction> {
         const prismaCreatedTransaction = await this.prisma.transaction.create({
@@ -21,19 +23,30 @@ export class PrismaTransactionRepository implements ITransactionRepository {
             }
         });
 
-        const createdTransaction = Transaction.reconstitute({
-            id: prismaCreatedTransaction.id,
-            type: prismaCreatedTransaction.type,
-            amount: Number(prismaCreatedTransaction.amount),
-            currency: prismaCreatedTransaction.currency,
-            idempotencyKey: prismaCreatedTransaction.idempotencyKey,
-            status: prismaCreatedTransaction.status,
-            relatedTransactionId: prismaCreatedTransaction.relatedTransactionId,
-            description: prismaCreatedTransaction.description,
-            createdAt: prismaCreatedTransaction.createdAt,
-            completedAt: prismaCreatedTransaction.completedAt,
-        });
+        const createdTransaction = Transaction.reconstitute(prismaCreatedTransaction);
 
         return createdTransaction;
+    }
+
+    async findById(id: string): Promise<Transaction> {
+        const transaction = await this.prisma.transaction.findUnique({ where: { id } });
+
+        if (!transaction) {
+            throw new TransactionNotFound();
+        }
+
+        const response = Transaction.reconstitute(transaction);
+
+        return response;
+    }
+
+    async updateStatusById(id: string, status: TransactionStatus): Promise<Transaction> {
+        const transactionUpdated = await this.prisma.transaction.update({ where: { id }, data: {
+            status
+        } });
+
+        const response = Transaction.reconstitute(transactionUpdated);
+
+        return response;
     }
 }
