@@ -1,3 +1,4 @@
+import { Currency } from "../../../../domain/entities/Currency";
 import { TransactionStatus } from "../../../../domain/entities/TransactionStatus";
 import { TransactionType } from "../../../../domain/entities/TransactionType";
 
@@ -6,7 +7,7 @@ export interface TransferServiceResponseDTO {
   type: TransactionType;
   status: TransactionStatus;
   amount: number;
-  currency: number;
+  currency: Currency;
   idempotencyKey: string;
   relatedTransactionId: string | null;
   description: string | null;
