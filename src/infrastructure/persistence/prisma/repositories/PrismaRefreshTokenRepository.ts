@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client";
 import { IRefreshTokenRepository } from "../../../../application/ports/output/IRefreshTokenRepository";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken";
-import { RefreshTokenNotFoundError } from "../../../../domain/errors/RefreshTokenNotFoundError";
+import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
 
 
 export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {

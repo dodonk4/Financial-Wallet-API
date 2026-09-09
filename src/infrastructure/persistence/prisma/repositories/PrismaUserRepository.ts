@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client.ts";
 import { IUserRepository } from "../../../../application/ports/output/IUserRepository.ts";
 import { User } from "../../../../domain/entities/User.ts";
-import { UserNotFound } from "../../../../domain/errors/UserNotFoundError.ts";
+import { UserNotFound } from "../../../../domain/errors/404/UserNotFoundError.ts";
 
 export class PrismaUserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaClient | Prisma.TransactionClient) { }
@@ -46,15 +46,7 @@ export class PrismaUserRepository implements IUserRepository {
       },
     });
 
-    const createdUser = User.create({
-      id: prismaCreatedUser.id,
-      email: prismaCreatedUser.email,
-      passwordHash: prismaCreatedUser.passwordHash,
-      firstName: prismaCreatedUser.firstName,
-      lastName: prismaCreatedUser.lastName,
-      identifierType: prismaCreatedUser.identifierType,
-      identifierNumber: prismaCreatedUser.identifierNumber,
-    })
+    const createdUser = User.reconstitute(prismaCreatedUser);
 
     return createdUser;
   }
