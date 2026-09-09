@@ -22,6 +22,11 @@ import { RefreshTokenUseCase } from "./application/use-cases/auth/refresh/Refres
 import { LogoutUseCase } from "./application/use-cases/auth/logout/LogoutUseCase.ts";
 import { LogoutAllUseCase } from "./application/use-cases/auth/logout/LogoutAllUseCase.ts";
 import errorHandler from "./interfaces/http/middlewares/errorHandler.ts";
+import { TransferUsecase } from "./application/use-cases/transfers/transfer/TransferUseCase.ts";
+import { RedisIdempotencyStore } from "./infrastructure/persistence/prisma/repositories/RedisIdempotencyStore.ts";
+import { redisClient } from "./infrastructure/cache/redisClient.ts";
+import { TransfersController } from "./interfaces/http/controllers/entities/TransfersController.ts";
+import { createTranfersRouter } from "./interfaces/http/routes/transfers.routes.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -35,6 +40,8 @@ const tokenHasher = new SHA256Hasher();
 const eventPublisher = new NodeEventPublisher();
 
 const unitOfWork = new PrismaUnitOfWork(prisma);
+
+const idempotencyStore = new RedisIdempotencyStore(redisClient);
 
 const registerUserUseCase = new RegisterUserUseCase(
   userRepository,
@@ -70,6 +77,12 @@ const logoutAllUseCase = new LogoutAllUseCase(
   tokenHasher,
 )
 
+const transferUseCase = new TransferUsecase(
+  idempotencyStore,
+  tokenHasher,
+  unitOfWork,
+)
+
 const authController = new AuthController(
   registerUserUseCase,
   loginUseCase,
@@ -78,11 +91,20 @@ const authController = new AuthController(
   logoutAllUseCase
 );
 
+const transfersController = new TransfersController(
+  transferUseCase,
+)
+
 const authRouter = createAuthRouter(
   authController,
 );
 
+const transfersRouter = createTranfersRouter(
+  transfersController,
+)
+
 app.use("/auth", authRouter);
+app.use("/transfers", transfersRouter);
 app.use("/health", healthRouter);
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Financial Wallet API' });
