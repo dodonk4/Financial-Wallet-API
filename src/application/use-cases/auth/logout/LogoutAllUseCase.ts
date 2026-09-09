@@ -1,6 +1,6 @@
 import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
 import { RefreshTokenAlreadyRevokedError } from "../../../../domain/errors/RefreshTokenAlreadyRevokedError";
-import { RefreshTokenNotFoundError } from "../../../../domain/errors/RefreshTokenNotFoundError";
+import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
 import { LogoutRequestDTO } from "./LogoutRequestDTO";
