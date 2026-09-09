@@ -1,11 +1,10 @@
-import { RedisClient } from "bullmq";
-import { IIdempotencyStore } from "../../../../application/ports/output/IIdempotencyStore";
-import { Transaction } from "../../../../domain/entities/Transaction";
+import { IIdempotencyStore, TransactionPayload } from "../../../../application/ports/output/IIdempotencyStore";
+import Redis from "ioredis";
 
 export class RedisIdempotencyStore implements IIdempotencyStore {
-  constructor(private readonly redis: RedisClient) {}
+  constructor(private readonly redis: Redis) {}
 
-  async saveIdempotencyKey(idempotencyKey: string, paylaod: Transaction): Promise<string> {
+  async saveIdempotencyKey(idempotencyKey: string, paylaod: TransactionPayload): Promise<string> {
 
     const stringifyPayload = JSON.stringify(paylaod);
 
@@ -18,17 +17,13 @@ export class RedisIdempotencyStore implements IIdempotencyStore {
     return result;
   }
 
-  async searchIdempotencyKey(idempotencyKey: string): Promise<Transaction> {
+  async searchIdempotencyKey(idempotencyKey: string): Promise<string> {
     const payload = await this.redis.get(idempotencyKey);
 
-    const transaction: Transaction | null = payload
-      ? JSON.parse(payload)
-      : null;
-
-    if (!transaction) {
+    if (!payload) {
       throw new Error("There's no transaction found"); //Replace error
     }
 
-    return transaction;
+    return payload;
   }
 }
