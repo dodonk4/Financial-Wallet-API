@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/client";
 import { Currency } from "./Currency";
 import { TransactionStatus } from "./TransactionStatus";
 import { TransactionType } from "./TransactionType";
@@ -6,7 +7,7 @@ export interface TransactionProps {
   id: string;
   type: TransactionType;
   status: TransactionStatus;
-  amount: number;
+  amount: number | Decimal;
   currency: Currency;
   idempotencyKey: string;
   relatedTransactionId: string | null;
@@ -24,7 +25,7 @@ export class Transaction {
     amount: number;
     currency: Currency;
     idempotencyKey: string;
-    relatedTransactionId: string;
+    relatedTransactionId: string | null;
     description: string | null;
   }): Transaction {
     return new Transaction({
@@ -52,7 +53,7 @@ export class Transaction {
   }
 
   get amount(): number {
-    return this.props.amount;
+    return Number(this.props.amount);
   }
 
   get currency(): Currency {

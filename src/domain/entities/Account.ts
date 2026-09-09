@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/client";
 import { AccountStatus } from "./AccountStatus";
 import { Currency } from "./Currency";
 
@@ -5,8 +6,8 @@ export interface AccountProps {
   id: string;
   userId: string;
   currency: Currency;
-  balanceCache: number;
-  heldBalance: number;
+  balanceCache: number | Decimal;
+  heldBalance: number | Decimal;
   status: AccountStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -47,11 +48,11 @@ export class Account {
   }
 
   get balanceCache() {
-    return this.props.balanceCache;
+    return Number(this.props.balanceCache);
   }
 
   get heldBalance() {
-    return this.props.heldBalance;
+    return Number(this.props.heldBalance);
   }
 
   get currency() {
