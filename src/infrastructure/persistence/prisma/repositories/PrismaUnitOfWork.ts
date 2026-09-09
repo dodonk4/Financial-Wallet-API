@@ -8,6 +8,8 @@ import {
 import { PrismaUserRepository } from "./PrismaUserRepository.ts";
 import { PrismaAccountRepository } from "./PrismaAccountRepository.ts";
 import { PrismaRefreshTokenRepository } from "./PrismaRefreshTokenRepository.ts";
+import { PrismaTransactionRepository } from "./PrismaTransactionRepository.ts";
+import { PrismaLedgerEntryRepository } from "./PrismaLedgerEntryRepository.ts";
 
 
 export class PrismaUnitOfWork implements IUnitOfWork {
@@ -21,6 +23,8 @@ export class PrismaUnitOfWork implements IUnitOfWork {
         user: new PrismaUserRepository(tx),
         account: new PrismaAccountRepository(tx),
         refreshToken: new PrismaRefreshTokenRepository(tx),
+        transaction: new PrismaTransactionRepository(tx),
+        ledgerEntry: new PrismaLedgerEntryRepository(tx),
       };
 
       return callback(repositories);
