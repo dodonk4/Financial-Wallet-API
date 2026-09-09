@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken";
 import { NonValidRefreshTokenError } from "../../../../domain/errors/NonValidRefreshTokenError";
-import { RefreshTokenNotFoundError } from "../../../../domain/errors/RefreshTokenNotFoundError";
-import { UserNotFound } from "../../../../domain/errors/UserNotFoundError";
+import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
+import { UserNotFound } from "../../../../domain/errors/404/UserNotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
