@@ -8,6 +8,8 @@ import { PrismaUserRepository } from "./PrismaUserRepository.ts";
 import { PrismaAccountRepository } from "./PrismaAccountRepository.ts";
 import { PrismaRefreshTokenRepository } from "./PrismaRefreshTokenRepository.ts";
 import { PrismaTestingHelper } from '@chax-at/transactional-prisma-testing';
+import { PrismaTransactionRepository } from "./PrismaTransactionRepository.ts";
+import { PrismaLedgerEntryRepository } from "./PrismaLedgerEntryRepository.ts";
 
 let prismaTestingHelper: PrismaTestingHelper<PrismaClient> | undefined;
 let prismaService: PrismaClient;
@@ -34,6 +36,8 @@ export class PrismaTestUnitOfWork implements IUnitOfWork {
         user: new PrismaUserRepository(tx),
         account: new PrismaAccountRepository(tx),
         refreshToken: new PrismaRefreshTokenRepository(tx),
+        transaction: new PrismaTransactionRepository(tx),
+        ledgerEntry: new PrismaLedgerEntryRepository(tx),
       };
 
       const callbackReturn = callback(repositories);
