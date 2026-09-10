@@ -148,4 +148,5 @@ model LedgerEntry {
 
   @@index([accountId, createdAt(sort: Desc)])
   @@index([transactionId])
+  @@MAP("ledger_entries")
 }
