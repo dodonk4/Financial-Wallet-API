@@ -41,7 +41,7 @@ const eventPublisher = new NodeEventPublisher();
 
 const unitOfWork = new PrismaUnitOfWork(prisma);
 
-const idempotencyStore = new RedisIdempotencyStore(redisClient);
+const idempotencyStore = new RedisIdempotencyStore(redisClient, tokenHasher);
 
 const registerUserUseCase = new RegisterUserUseCase(
   userRepository,
