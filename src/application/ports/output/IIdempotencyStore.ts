@@ -9,7 +9,13 @@ export interface TransactionPayload {
 }
 
 export interface IIdempotencyStore {
+    /**
+     * It hashes the payload. It doesn't need to recieve the payload hashed
+     * @param idempotencyKey 
+     * @param paylaod 
+     * @returns 
+     */
     saveIdempotencyKey(idempotencyKey: string, payload: TransactionPayload): Promise<string>
 
-    searchIdempotencyKey(idempotencyKey: string): Promise<string>
+    searchIdempotencyKey(idempotencyKey: string): Promise<string | null>
 }
