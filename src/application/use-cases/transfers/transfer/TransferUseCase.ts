@@ -30,11 +30,12 @@ export class TransferUsecase {
 
         const currentPayloadHashed = await this.hashProvider.hash(JSON.stringify(currentPayload));
 
-        const idempotencyValue: IdempotencyValueSaved | null = JSON.parse(await this.idempotencyStore.searchIdempotencyKey(idempotencyKey));
+        const idempotencyValue: string | null = await this.idempotencyStore.searchIdempotencyKey(idempotencyKey);
 
         if (idempotencyValue) {
-            if (idempotencyValue.secretPayload === currentPayloadHashed) {
-                const response: TransferServiceResponseDTO = JSON.parse(idempotencyValue.response);
+            const idempotencyPayload: IdempotencyValueSaved = JSON.parse(idempotencyValue);
+            if (idempotencyPayload.secretPayload === currentPayloadHashed) {
+                const response: TransferServiceResponseDTO = JSON.parse(idempotencyPayload.response);
                 return response;
             }
 
@@ -95,6 +96,8 @@ export class TransferUsecase {
             
             return persistedTransaction;
         })
+        
+        await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, currentPayload);
 
         const response = Transaction.reconstitute(transactionToReturn);
 
