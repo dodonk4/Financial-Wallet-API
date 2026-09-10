@@ -19,16 +19,43 @@ async function main() {
         }
     });
 
+    const _correctUserAccount = await prisma.account.upsert({
+        where: { id: "2291d9c5-724f-4c09-a5d2-7dfa8af51f63" },
+        update: {},
+        create: {
+            id: "2291d9c5-724f-4c09-a5d2-7dfa8af51f63",
+            userId: "931cb862-b067-4fed-a4f9-827940e83a9e",
+            currency: "ARS",
+            balanceCache: 200000,
+            heldBalance: 0,
+            status: "ACTIVE",   
+        }
+    });
+
     const _userAlreadyRegistered = await prisma.user.upsert({
         where: { email: "email.registered@mock.com" },
         update: {},
         create: {
+            id: "458afd6f-9243-4ce8-ac94-351dd7ad5204",
             email: "email.registered@mock.com",
             passwordHash: "$argon2id$v=19$m=65536,p=4,t=3$qbceNDFO/vhwkql85U6wKA$pXAzfsNDJVwNUCP7xmVQeFqkuLZhrMIM4aVh0PLQfGM",
             firstName: "Email Already Registered",
             lastName: "Case",
             identifierType: "DNI",
             identifierNumber: 11111111,
+        }
+    });
+
+    const _userAlreadyRegisteredAccount = await prisma.account.upsert({
+        where: { id: "f66e84c4-8ab0-4010-8102-3f1a3fd5eb08" },
+        update: {},
+        create: {
+            id: "f66e84c4-8ab0-4010-8102-3f1a3fd5eb08",
+            userId: "458afd6f-9243-4ce8-ac94-351dd7ad5204",
+            currency: "ARS",
+            balanceCache: 200000,
+            heldBalance: 0,
+            status: "ACTIVE",   
         }
     });
 
