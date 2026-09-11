@@ -1,13 +1,4 @@
-import { Currency } from "../../../domain/entities/Currency"
-
-export interface TransactionPayload {
-    originAccountId: string,
-    destinyAccountId: string,
-    amount: number,
-    currency: Currency,
-    description: string | null,
-}
-
+import { IdempotencyValueSaved } from "../../use-cases/transfers/transfer/TransferUseCase"
 export interface IIdempotencyStore {
     /**
      * It hashes the payload. It doesn't need to recieve the payload hashed
@@ -15,7 +6,7 @@ export interface IIdempotencyStore {
      * @param paylaod 
      * @returns 
      */
-    saveIdempotencyKey(idempotencyKey: string, payload: TransactionPayload): Promise<string>
+    saveIdempotencyKey(idempotencyKey: string, value: IdempotencyValueSaved): Promise<string>
 
     searchIdempotencyKey(idempotencyKey: string): Promise<string | null>
 }
