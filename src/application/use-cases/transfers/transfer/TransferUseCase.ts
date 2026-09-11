@@ -1,5 +1,5 @@
 import { Transaction } from "../../../../domain/entities/Transaction";
-import { IIdempotencyStore, TransactionPayload } from "../../../ports/output/IIdempotencyStore";
+import { IIdempotencyStore } from "../../../ports/output/IIdempotencyStore";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { TransferServiceRequestDTO } from "./TransferRequestDTO";
 import { TransferServiceResponseDTO } from "./TransferResponseDTO";
@@ -8,8 +8,9 @@ import { randomUUID } from "node:crypto";
 import { LedgerEntry } from "../../../../domain/entities/LedgerEntry";
 import { CurrencyConflictError } from "../../../../domain/errors/CurrencyConflict";
 import { InsufficientBalance } from "../../../../domain/errors/InsufficientBalance";
+import { IdempotencyPayloadConflictError } from "../../../../domain/errors/IdempotencyPayloadConflict";
 
-interface IdempotencyValueSaved {
+export interface IdempotencyValueSaved {
     secretPayload: string,
     response: string,
 }
@@ -26,7 +27,7 @@ export class TransferUsecase {
 
         const { idempotencyKey, ...payloadData } = dto;
 
-        const currentPayload: TransactionPayload = payloadData;
+        const currentPayload = payloadData;
 
         const currentPayloadHashed = await this.hashProvider.hash(JSON.stringify(currentPayload));
 
@@ -39,7 +40,7 @@ export class TransferUsecase {
                 return response;
             }
 
-            throw new Error("The payload is different"); //Need to create an error for this 
+            throw new IdempotencyPayloadConflictError();
         }
 
         const transactionToReturn = await this.unitOfWork.execute(async (repositories) => {
@@ -96,10 +97,17 @@ export class TransferUsecase {
             
             return persistedTransaction;
         })
-        
-        await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, currentPayload);
 
         const response = Transaction.reconstitute(transactionToReturn);
+
+        const responseStringify = JSON.stringify(response);
+
+        const valueToSaveInCache: IdempotencyValueSaved = {
+            secretPayload: JSON.stringify(currentPayload),
+            response: responseStringify
+        }
+
+        await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, valueToSaveInCache);
 
         return response;
     }
