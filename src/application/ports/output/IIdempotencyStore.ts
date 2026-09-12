@@ -9,4 +9,6 @@ export interface IIdempotencyStore {
     saveIdempotencyKey(idempotencyKey: string, value: IdempotencyValueSaved): Promise<string>
 
     searchIdempotencyKey(idempotencyKey: string): Promise<string | null>
+
+    deleteIdempotencyKey(idempotencyKey: string): Promise<number>
 }

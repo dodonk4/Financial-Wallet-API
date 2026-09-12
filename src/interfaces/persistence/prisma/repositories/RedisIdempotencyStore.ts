@@ -35,4 +35,10 @@ export class RedisIdempotencyStore implements IIdempotencyStore {
 
     return payload;
   }
+
+  async deleteIdempotencyKey(idempotencyKey: string): Promise<number> {
+    const deletion = await this.redis.del(idempotencyKey);
+    
+    return deletion;
+  }
 }
