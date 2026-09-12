@@ -9,6 +9,7 @@ import { LedgerEntry } from "../../../../domain/entities/LedgerEntry";
 import { CurrencyConflictError } from "../../../../domain/errors/CurrencyConflict";
 import { InsufficientBalance } from "../../../../domain/errors/InsufficientBalance";
 import { IdempotencyPayloadConflictError } from "../../../../domain/errors/IdempotencyPayloadConflict";
+import { ITransactionRepository } from "../../../ports/output/ITransactionRepository";
 
 export interface IdempotencyValueSaved {
     secretPayload: string,
@@ -20,6 +21,7 @@ export class TransferUsecase {
         private readonly idempotencyStore: IIdempotencyStore,
         private readonly hashProvider: ITokenHasher,
         private readonly unitOfWork: IUnitOfWork,
+        private readonly transactionRepository: ITransactionRepository,
     ) { }
 
     async execute(dto: TransferServiceRequestDTO): Promise<TransferServiceResponseDTO> {
@@ -41,6 +43,12 @@ export class TransferUsecase {
             }
 
             throw new IdempotencyPayloadConflictError();
+        }
+
+        const idempotencyInDB: Transaction | null = await this.transactionRepository.findByIdempotencyKey(idempotencyKey);
+
+        if(idempotencyInDB){
+            return idempotencyInDB;
         }
 
         const transactionToReturn = await this.unitOfWork.execute(async (repositories) => {
@@ -105,6 +113,12 @@ export class TransferUsecase {
         const valueToSaveInCache: IdempotencyValueSaved = {
             secretPayload: JSON.stringify(currentPayload),
             response: responseStringify
+        }
+
+        const deletion = await this.idempotencyStore.deleteIdempotencyKey(idempotencyKey);
+
+        if(!deletion && idempotencyValue){
+            throw new Error("An error has occured while trying to delete the idempotencyKey in cache");
         }
 
         await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, valueToSaveInCache);
