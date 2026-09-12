@@ -2,8 +2,8 @@
 import app from "./appConsistent.ts";
 import { Response, Request } from "express";
 
-import { PrismaUserRepository } from "./infrastructure/persistence/prisma/repositories/PrismaUserRepository.ts";
-import { PrismaUnitOfWork } from "./infrastructure/persistence/prisma/repositories/PrismaUnitOfWork.ts";
+import { PrismaUserRepository } from "./interfaces/persistence/prisma/repositories/PrismaUserRepository.ts";
+import { PrismaUnitOfWork } from "./interfaces/persistence/prisma/repositories/PrismaUnitOfWork.ts";
 
 import { Argon2PasswordHasher } from "./infrastructure/security/Argon2PasswordHasher.ts";
 import { JwtTokenProvider } from "./infrastructure/security/JwtTokenProvider.ts";
@@ -23,7 +23,7 @@ import { LogoutUseCase } from "./application/use-cases/auth/logout/LogoutUseCase
 import { LogoutAllUseCase } from "./application/use-cases/auth/logout/LogoutAllUseCase.ts";
 import errorHandler from "./interfaces/http/middlewares/errorHandler.ts";
 import { TransferUsecase } from "./application/use-cases/transfers/transfer/TransferUseCase.ts";
-import { RedisIdempotencyStore } from "./infrastructure/persistence/prisma/repositories/RedisIdempotencyStore.ts";
+import { RedisIdempotencyStore } from "./interfaces/persistence/prisma/repositories/RedisIdempotencyStore.ts";
 import { redisClient } from "./infrastructure/cache/redisClient.ts";
 import { TransfersController } from "./interfaces/http/controllers/entities/TransfersController.ts";
 import { createTranfersRouter } from "./interfaces/http/routes/transfers.routes.ts";

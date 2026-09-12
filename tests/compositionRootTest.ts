@@ -2,7 +2,7 @@
 import app from "../src/appNonConsistent.ts";
 import { Response, Request } from "express";
 
-import { PrismaUserRepository } from "./../src/infrastructure/persistence/prisma/repositories/PrismaUserRepository.ts";
+import { PrismaUserRepository } from "../src/interfaces/persistence/prisma/repositories/PrismaUserRepository.ts";
 
 import { Argon2PasswordHasher } from "./../src/infrastructure/security/Argon2PasswordHasher.ts";
 import { JwtTokenProvider } from "./../src/infrastructure/security/JwtTokenProvider.ts";
@@ -20,7 +20,7 @@ import { SHA256Hasher } from "./../src/infrastructure/security/SHA256Hasher.ts";
 import { RefreshTokenUseCase } from "./../src/application/use-cases/auth/refresh/RefreshTokenUseCase.ts";
 import { LogoutUseCase } from "./../src/application/use-cases/auth/logout/LogoutUseCase.ts";
 import { LogoutAllUseCase } from "./../src/application/use-cases/auth/logout/LogoutAllUseCase.ts";
-import { PrismaTestUnitOfWork } from "../src/infrastructure/persistence/prisma/repositories/PrismaTestUnitOfWork.ts";
+import { PrismaTestUnitOfWork } from "../src/interfaces/persistence/prisma/repositories/PrismaTestUnitOfWork.ts";
 import errorHandler from "../src/interfaces/http/middlewares/errorHandler.ts";
 
 
