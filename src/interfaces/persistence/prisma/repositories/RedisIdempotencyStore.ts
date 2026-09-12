@@ -21,6 +21,7 @@ export class RedisIdempotencyStore implements IIdempotencyStore {
     }
 
     const result = await this.redis.set("idempotencyKey:" + idempotencyKey, JSON.stringify(valueToSave));
+    await this.redis.expire("idempotencyKey:" + idempotencyKey, 86400);//24 hours
 
     if (!result) {
       throw new Error("An error occured while saving the idempotencyKey");
