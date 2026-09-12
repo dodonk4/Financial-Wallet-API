@@ -101,8 +101,8 @@ describe("Register endpoints", () => {
         //**Pending error test: user is underage
 
     //**This should be the function called to do the rollback with prismaTestingHelper.
-    //**But, apparently, it works fine withou it.
-    //**More details in src\infrastructure\persistence\prisma\repositories\PrismaTestUnitOfWork.ts
+    //**But, apparently, it works fine without it.
+    //**More details in src\interfaces\persistence\prisma\repositories\PrismaTestUnitOfWork.ts
 
     // afterEach(async () => {
     //     prismaTestingHelper?.rollbackCurrentTransaction();
