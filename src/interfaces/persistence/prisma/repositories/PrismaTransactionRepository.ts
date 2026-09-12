@@ -49,4 +49,16 @@ export class PrismaTransactionRepository implements ITransactionRepository {
 
         return response;
     }
+
+    async findByIdempotencyKey(idempotencyKey: string): Promise<Transaction> {
+        const transaction = await this.prisma.transaction.findUnique({ where: { idempotencyKey } });
+
+        if (!transaction) {
+            throw new TransactionNotFound();
+        }
+
+        const response = Transaction.reconstitute(transaction);
+
+        return response;
+    }
 }
