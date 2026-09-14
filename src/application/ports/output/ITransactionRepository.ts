@@ -6,7 +6,7 @@ export interface ITransactionRepository{
 
     findById(id: string): Promise<Transaction | null>
 
-    updateStatusById(id: string, status: TransactionStatus): Promise<Transaction | null>
+    updateStatusById(id: string, status: TransactionStatus): Promise<Transaction>
 
     findByIdempotencyKey(idempotencyKey: string): Promise<Transaction | null>
 }
