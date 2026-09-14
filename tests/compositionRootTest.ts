@@ -1,16 +1,10 @@
-
 import app from "../src/appNonConsistent.ts";
 import { Response, Request } from "express";
-
 import { PrismaUserRepository } from "../src/interfaces/persistence/prisma/repositories/PrismaUserRepository.ts";
-
 import { Argon2PasswordHasher } from "./../src/infrastructure/security/Argon2PasswordHasher.ts";
 import { JwtTokenProvider } from "./../src/infrastructure/security/JwtTokenProvider.ts";
-
 import { NodeEventPublisher } from "./../src/infrastructure/events/NodeEventPublisher.ts";
-
 import { RegisterUserUseCase } from "./../src/application/use-cases/auth/register/RegisterUserUseCase.ts";
-
 import { AuthController } from "./../src/interfaces/http/controllers/entities/AuthController.ts";
 import { createAuthRouter } from "./../src/interfaces/http/routes/auth.routes.ts";
 import { prisma } from "./../src/infrastructure/database/prisma.ts";
@@ -27,6 +21,7 @@ import { redisClient } from "../src/infrastructure/cache/redisClient.ts";
 import { TransferUsecase } from "../src/application/use-cases/transfers/transfer/TransferUseCase.ts";
 import { TransfersController } from "../src/interfaces/http/controllers/entities/TransfersController.ts";
 import { createTranfersRouter } from "../src/interfaces/http/routes/transfers.routes.ts";
+import { PrismaTransactionRepository } from "../src/interfaces/persistence/prisma/repositories/PrismaTransactionRepository.ts";
 
 
 const userRepository = new PrismaUserRepository(prisma);
@@ -42,6 +37,8 @@ const eventPublisher = new NodeEventPublisher();
 const unitOfWork = new PrismaTestUnitOfWork(prisma);
 
 const idempotencyStore = new RedisIdempotencyStore(redisClient, tokenHasher);
+
+const transactionRepository = new PrismaTransactionRepository(prisma);
 
 const registerUserUseCase = new RegisterUserUseCase(
   userRepository,
@@ -81,6 +78,7 @@ const transferUseCase = new TransferUsecase(
   idempotencyStore,
   tokenHasher,
   unitOfWork,
+  transactionRepository
 )
 
 const authController = new AuthController(
