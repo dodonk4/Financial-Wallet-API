@@ -17,7 +17,7 @@ import { LogoutUseCase } from "./application/use-cases/auth/logout/LogoutUseCase
 import { LogoutAllUseCase } from "./application/use-cases/auth/logout/LogoutAllUseCase.ts";
 import errorHandler from "./interfaces/http/middlewares/errorHandler.ts";
 import { TransferUsecase } from "./application/use-cases/transfers/transfer/TransferUseCase.ts";
-import { RedisIdempotencyStore } from "./interfaces/persistence/prisma/repositories/RedisIdempotencyStore.ts";
+import { RedisIdempotencyStore } from "./interfaces/persistence/redis/RedisIdempotencyStore.ts";
 import { redisClient } from "./infrastructure/cache/redisClient.ts";
 import { TransfersController } from "./interfaces/http/controllers/entities/TransfersController.ts";
 import { createTranfersRouter } from "./interfaces/http/routes/transfers.routes.ts";
