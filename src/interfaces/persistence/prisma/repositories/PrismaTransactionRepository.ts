@@ -1,7 +1,6 @@
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client";
 import { ITransactionRepository } from "../../../../application/ports/output/ITransactionRepository";
 import { Transaction } from "../../../../domain/entities/Transaction";
-import { TransactionNotFound } from "../../../../domain/errors/404/TransactionNotFoundError";
 import { TransactionStatus } from "../../../../domain/entities/TransactionStatus";
 
 export class PrismaTransactionRepository implements ITransactionRepository {
