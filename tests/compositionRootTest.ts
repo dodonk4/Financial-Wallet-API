@@ -22,7 +22,12 @@ import { TransferUsecase } from "../src/application/use-cases/transfers/transfer
 import { TransfersController } from "../src/interfaces/http/controllers/entities/TransfersController.ts";
 import { createTranfersRouter } from "../src/interfaces/http/routes/transfers.routes.ts";
 import { PrismaTransactionRepository } from "../src/interfaces/persistence/prisma/repositories/PrismaTransactionRepository.ts";
+import { createServer } from "node:http";
+import { SocketIoNotificationPublisher } from "../src/interfaces/persistence/socket-io/Socket-ioNotificationPublisher.ts";
 
+const httpServer = createServer(app);
+
+const notificationPublisher = new SocketIoNotificationPublisher(httpServer);
 
 const userRepository = new PrismaUserRepository(prisma);
 
@@ -78,7 +83,8 @@ const transferUseCase = new TransferUsecase(
   idempotencyStore,
   tokenHasher,
   unitOfWork,
-  transactionRepository
+  transactionRepository,
+  notificationPublisher
 )
 
 const authController = new AuthController(
@@ -112,6 +118,7 @@ app.use(errorHandler);
 
 export {
   app,
+  httpServer,
   prisma,
   userRepository,
   passwordHasher,
