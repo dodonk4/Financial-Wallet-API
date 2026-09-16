@@ -1,10 +1,10 @@
 import request from "supertest";
 import { redisClient } from "../../src/infrastructure/cache/redisClient";
-import { app, prisma } from "../compositionRootTest";
+import { httpServer, prisma } from "../compositionRootTest";
 
 describe("Login endpoints", () => {
     it("should return 201 when the user is logged", async () => {
-        const response = await request(app).
+        const response = await request(httpServer).
         post("/auth/login").
         send({
             email: "email.registered@mock.com",
@@ -15,7 +15,7 @@ describe("Login endpoints", () => {
     });
 
     it("should return 400 after failing zod validation", async () => {
-        const response = await request(app).
+        const response = await request(httpServer).
         post("/auth/login").
         send({
             email: "email.registered@mock.com",
@@ -26,7 +26,7 @@ describe("Login endpoints", () => {
     });
 
     it("should return 401 after entering invalid credentials", async () => {
-        const response = await request(app).
+        const response = await request(httpServer).
         post("/auth/login").
         send({
             email: "email.registered@mock.com",

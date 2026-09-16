@@ -1,10 +1,11 @@
 import request from "supertest"
-import { app, prisma } from "../compositionRootTest"
+import { httpServer, prisma } from "../compositionRootTest"
 import { redisClient } from "../../src/infrastructure/cache/redisClient";
 
 describe("Transfers endpoints", () => {
     it("should return 201 and the transaction done", async () => {
-        const response = await request(app)
+        
+        const response = await request(httpServer)
             .post("/transfers")
             .send({
                 "originAccountId": "f66e84c4-8ab0-4010-8102-3f1a3fd5eb08",

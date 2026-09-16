@@ -1,5 +1,5 @@
 import request from "supertest";
-import { app } from "../../tests/compositionRootTest";
+import { httpServer } from "../../tests/compositionRootTest";
 import { prisma } from '../../src/infrastructure/database/prisma';
 import { redisClient } from '../../src/infrastructure/cache/redisClient';
 // import { randomInt } from "node:crypto";
@@ -8,7 +8,7 @@ import { redisClient } from '../../src/infrastructure/cache/redisClient';
 describe("Register endpoints", () => {
 
         it("should return 201 and the user registered", async () => {
-            const response = await request(app)
+            const response = await request(httpServer)
                 .post("/auth/register").
                 send({
                     firstName: "Miguel",
@@ -26,7 +26,7 @@ describe("Register endpoints", () => {
         });
 
         it("should return 400 after failing zod validation", async () => {
-            const response = await request(app)
+            const response = await request(httpServer)
                 .post("/auth/register").
                 send({
                     firstName: "Miguel",
@@ -44,7 +44,7 @@ describe("Register endpoints", () => {
         });
 
         it("should return 409 if the email is already registered", async () => {
-            const response = await request(app)
+            const response = await request(httpServer)
                 .post("/auth/register").
                 send({
                     firstName: "Miguel",
@@ -62,7 +62,7 @@ describe("Register endpoints", () => {
         });
 
         it("should return 409 if the document number is already registered", async () => {
-            const response = await request(app)
+            const response = await request(httpServer)
                 .post("/auth/register").
                 send({
                     firstName: "Miguel",
@@ -84,7 +84,7 @@ describe("Register endpoints", () => {
         //**It's just to check if a created user does a rollback or not
 
         // it("peristency check", async () => {
-        //     const response = await request(app)
+        //     const response = await request(httpServer)
         //         .post("/auth/register").
         //         send({
         //             firstName: "Persistency",
@@ -101,7 +101,7 @@ describe("Register endpoints", () => {
         //**Pending error test: user is underage
 
     //**This should be the function called to do the rollback with prismaTestingHelper.
-    //**But, apparently, it works fine without it.
+    //**But, httpServerarently, it works fine without it.
     //**More details in src\interfaces\persistence\prisma\repositories\PrismaTestUnitOfWork.ts
 
     // afterEach(async () => {
