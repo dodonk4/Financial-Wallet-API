@@ -10,6 +10,7 @@ import { CurrencyConflictError } from "../../../../domain/errors/CurrencyConflic
 import { InsufficientBalance } from "../../../../domain/errors/InsufficientBalance";
 import { IdempotencyPayloadConflictError } from "../../../../domain/errors/IdempotencyPayloadConflict";
 import { ITransactionRepository } from "../../../ports/output/ITransactionRepository";
+import { INotificationPublisher } from "../../../ports/output/INotificationPublisher";
 
 export interface IdempotencyValueSaved {
     secretPayload: string,
@@ -22,6 +23,7 @@ export class TransferUsecase {
         private readonly hashProvider: ITokenHasher,
         private readonly unitOfWork: IUnitOfWork,
         private readonly transactionRepository: ITransactionRepository,
+        private readonly notificationPublisher: INotificationPublisher,
     ) { }
 
     async execute(dto: TransferServiceRequestDTO): Promise<TransferServiceResponseDTO> {
@@ -122,6 +124,7 @@ export class TransferUsecase {
         }
 
         await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, valueToSaveInCache);
+        this.notificationPublisher.emitSuccesfulTransaction(response);
 
         return response;
     }
