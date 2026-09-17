@@ -6,20 +6,34 @@ import { INotificationPublisher } from "../../../application/ports/output/INotif
 export class SocketIoNotificationPublisher implements INotificationPublisher {
 
     io: ioServer;
-    constructor(private httpServer: httpServer) {
+    room: string | undefined;
+    constructor(private httpServer: httpServer, private userId: string) {
         this.io = new ioServer(this.httpServer);
-    }
-
-
-    connection(userId: string): void {
         this.io.on("connection", (socket) => {
-            socket.join(`user:${userId}`);
+            // this.room = `user:${this.userId}`
+            // socket.join(this.room);
+            // this.io.to(this.room).emit("hello");
+            // console.log("This room was established as: ", this.room);
             console.log("Socket connected: Id: ", socket.id);
-        })
+        });
+        this.io.emit("hello");
     }
+
+
+    // connection(userId: string): void {
+    //     // this.io.on("connection", (socket) => {
+    //     //     this.room = `user:${userId}`
+    //     //     socket.join(this.room);
+    //     //     console.log("This room was established as: ", this.room);
+    //     //     console.log("Socket connected: Id: ", socket.id);
+    //     // })
+    // }
 
     emitSuccesfulTransaction(transaction: Transaction): void {
         this.io.emit("transaction", transaction);
+
+
     }
+
 
 }
