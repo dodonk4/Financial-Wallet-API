@@ -28,7 +28,6 @@ export class TransferUsecase {
 
     async execute(dto: TransferServiceRequestDTO): Promise<TransferServiceResponseDTO> {
         //The idempotency search can be outside the UnitOfWork
-
         const { idempotencyKey, ...payloadData } = dto;
 
         const currentPayload = payloadData;
@@ -124,7 +123,8 @@ export class TransferUsecase {
         }
 
         await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, valueToSaveInCache);
-        this.notificationPublisher.emitSuccesfulTransaction(response);
+        
+        this.notificationPublisher.emitSuccesfulTransaction(response, dto.originAccountId);
 
         return response;
     }
