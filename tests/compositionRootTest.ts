@@ -60,7 +60,7 @@ const loginUseCase = new LoginUseCase(
   tokenProvider,
   passwordHasher,
   tokenHasher,
-  unitOfWork
+  unitOfWork,
 )
 
 const refreshTokenUseCase = new RefreshTokenUseCase(
