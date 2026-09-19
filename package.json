@@ -20,8 +20,8 @@
     "start": "node dist/main.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "dotenv -e .env.test -- node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "migrate:test": "npx dotenv -e .env.test -- npx prisma migrate dev -- npx prisma db seed"
+    "test": "dotenv -e .env.test -- node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
+    "migrate:test": "npx dotenv -e .env.test -- npx prisma migrate dev && npx dotenv -e .env.test -- npx prisma db seed"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",
