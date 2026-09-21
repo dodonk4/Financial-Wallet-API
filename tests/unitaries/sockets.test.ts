@@ -36,7 +36,7 @@ describe("Sockets unitary tests", () => {
       });
     });
 
-    const response = await request(walletApiServer)
+    const __response = await request(walletApiServer)
       .post("/transfers")
       .send({
         originAccountId: "f66e84c4-8ab0-4010-8102-3f1a3fd5eb08",
