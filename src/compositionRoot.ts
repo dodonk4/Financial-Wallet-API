@@ -24,6 +24,7 @@ import { createTranfersRouter } from "./interfaces/http/routes/transfers.routes.
 import { PrismaTransactionRepository } from "./interfaces/persistence/prisma/repositories/PrismaTransactionRepository.ts";
 import { createServer } from "node:http";
 import { SocketIoNotificationPublisher } from "./interfaces/persistence/socket-io/Socket-ioNotificationPublisher.ts";
+import { AuthMiddleware } from "./interfaces/http/middlewares/authMiddleware.ts";
 
 const httpServer = createServer(app);
 
@@ -44,6 +45,8 @@ const unitOfWork = new PrismaUnitOfWork(prisma);
 const idempotencyStore = new RedisIdempotencyStore(redisClient, tokenHasher);
 
 const transactionRepository = new PrismaTransactionRepository(prisma);
+
+const authMiddleware = new AuthMiddleware(tokenProvider);
 
 const registerUserUseCase = new RegisterUserUseCase(
   userRepository,
@@ -105,6 +108,7 @@ const authRouter = createAuthRouter(
 
 const transfersRouter = createTranfersRouter(
   transfersController,
+  authMiddleware
 )
 
 app.use("/auth", authRouter);
