@@ -2,7 +2,6 @@ import { Server as httpServer } from "node:http";
 import { Server as ioServer } from "socket.io";
 import { Transaction } from "../../../domain/entities/Transaction";
 import { INotificationPublisher } from "../../../application/ports/output/INotificationPublisher";
-import { IUserRepository } from "../../../application/ports/output/IUserRepository";
 
 export class SocketIoNotificationPublisher implements INotificationPublisher {
 
