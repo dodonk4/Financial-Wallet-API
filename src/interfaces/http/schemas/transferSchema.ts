@@ -22,4 +22,7 @@ export const transferSchema = z.object({
 
     idempotencyKey: z
     .uuid(),
-})
+}).refine((data) => data.originAccountId !== data.destinyAccountId, {
+    message: "originAccountId and cannot have the same value",
+    path: ["destinyAccountId"],
+});
