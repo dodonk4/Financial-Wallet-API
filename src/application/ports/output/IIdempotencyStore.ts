@@ -11,4 +11,9 @@ export interface IIdempotencyStore {
     searchIdempotencyKey(idempotencyKey: string): Promise<string | null>
 
     deleteIdempotencyKey(idempotencyKey: string): Promise<number>
+
+    /**
+ * THIS METHOD IS ONLY FOR TESTING
+ */
+    flushAll(): Promise<void>
 }

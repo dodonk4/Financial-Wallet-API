@@ -41,4 +41,8 @@ export class RedisIdempotencyStore implements IIdempotencyStore {
     
     return deletion;
   }
+
+  async flushAll(): Promise<void> {
+    await this.redis.flushall();
+  }
 }
