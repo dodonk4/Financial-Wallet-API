@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import type { User } from "../../../domain/entities/User.ts";
 import { AccessTokenPayload } from "./token/AccessTokenPayload.ts";
 import { GeneratedTokens } from "./token/GeneratedTokens.ts";
@@ -9,4 +10,5 @@ export interface ITokenServiceProvider {
   verifyAccessToken(token: string): Promise<AccessTokenPayload>;
 
   verifyRefreshToken(token: string): Promise<RefreshTokenPayload>;
+  decodeToken(token: string): Promise<null | jwt.JwtPayload | string>;
 }

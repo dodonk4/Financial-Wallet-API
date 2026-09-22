@@ -52,4 +52,10 @@ export class JwtTokenProvider implements ITokenServiceProvider {
             process.env.JWT_REFRESH_SECRET!,
         ) as RefreshTokenPayload;
     }
+
+    async decodeToken(token: string): Promise<null | jwt.JwtPayload | string> {
+        return jwt.decode(
+            token
+        )
+    }
 }
