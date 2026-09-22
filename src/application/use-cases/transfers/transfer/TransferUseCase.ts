@@ -11,6 +11,9 @@ import { InsufficientBalance } from "../../../../domain/errors/InsufficientBalan
 import { IdempotencyPayloadConflictError } from "../../../../domain/errors/IdempotencyPayloadConflict";
 import { ITransactionRepository } from "../../../ports/output/ITransactionRepository";
 import { INotificationPublisher } from "../../../ports/output/INotificationPublisher";
+import extractToken from "../../../../interfaces/http/auth/extractToken";
+import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
+import { ForbiddenError } from "../../../../domain/errors/ForbiddenError";
 
 export interface IdempotencyValueSaved {
     secretPayload: string,
@@ -24,9 +27,10 @@ export class TransferUsecase {
         private readonly unitOfWork: IUnitOfWork,
         private readonly transactionRepository: ITransactionRepository,
         private readonly notificationPublisher: INotificationPublisher,
+        private readonly tokenServiceProvider: ITokenServiceProvider,
     ) { }
 
-    async execute(dto: TransferServiceRequestDTO): Promise<TransferServiceResponseDTO> {
+    async execute(dto: TransferServiceRequestDTO, authHeader: string): Promise<TransferServiceResponseDTO> {
         //The idempotency search can be outside the UnitOfWork
         const { idempotencyKey, ...payloadData } = dto;
 
@@ -48,19 +52,30 @@ export class TransferUsecase {
 
         const idempotencyInDB: Transaction | null = await this.transactionRepository.findByIdempotencyKey(idempotencyKey);
 
-        if(idempotencyInDB){
+        if (idempotencyInDB) {
             return idempotencyInDB;
         }
 
         const transactionToReturn = await this.unitOfWork.execute(async (repositories) => {
+
+            const token = extractToken(authHeader);
+
+            const decoded = await this.tokenServiceProvider.decodeToken(token);
+
             const originAccount = await repositories.account.findById(dto.originAccountId);
+
+            if (originAccount.userId != decoded?.sub) {
+                // throw new Error("The user is not the owner of the origin account");
+                throw new ForbiddenError();
+            }
+            
             const destinyAccount = await repositories.account.findById(dto.destinyAccountId);
 
-            if(originAccount.currency != destinyAccount.currency){
+            if (originAccount.currency != destinyAccount.currency) {
                 throw new CurrencyConflictError();
             }
 
-            if(originAccount.balanceCache < dto.amount){
+            if (originAccount.balanceCache < dto.amount) {
                 throw new InsufficientBalance();
             }
 
@@ -103,7 +118,7 @@ export class TransferUsecase {
             await repositories.account.updateAmountById(dto.destinyAccountId, dto.amount, "CREDIT");
 
             await repositories.transaction.updateStatusById(persistedTransaction.id, "COMPLETED");
-            
+
             return persistedTransaction;
         })
 
@@ -118,12 +133,12 @@ export class TransferUsecase {
 
         const deletion = await this.idempotencyStore.deleteIdempotencyKey(idempotencyKey);
 
-        if(!deletion && idempotencyValue){
+        if (!deletion && idempotencyValue) {
             throw new Error("An error has occured while trying to delete the idempotencyKey in cache");
         }
 
         await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, valueToSaveInCache);
-        
+
         this.notificationPublisher.emitSuccesfulTransaction(response, dto.originAccountId);
 
         return response;
