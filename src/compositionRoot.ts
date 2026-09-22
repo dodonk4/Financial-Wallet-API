@@ -87,7 +87,8 @@ const transferUseCase = new TransferUsecase(
   tokenHasher,
   unitOfWork,
   transactionRepository,
-  notificationPublisher
+  notificationPublisher,
+  tokenProvider
 )
 
 const authController = new AuthController(
