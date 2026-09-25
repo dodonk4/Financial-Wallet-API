@@ -56,7 +56,7 @@ export class TransferUsecase {
             return idempotencyInDB;
         }
 
-        const transactionToReturn = await this.unitOfWork.execute(async (repositories) => {
+        const response = await this.unitOfWork.execute(async (repositories) => {
 
             const token = extractToken(authHeader);
 
@@ -122,8 +122,6 @@ export class TransferUsecase {
             return persistedTransaction;
         })
 
-        const response = Transaction.reconstitute(transactionToReturn);
-
         const responseStringify = JSON.stringify(response);
 
         const valueToSaveInCache: IdempotencyValueSaved = {
@@ -141,17 +139,7 @@ export class TransferUsecase {
 
         this.notificationPublisher.emitSuccesfulTransaction(response, dto.originAccountId);
 
-        return {
-            id: response.id,
-            type: response.type,
-            status: response.status,
-            amount: response.amount,
-            currency: response.currency,
-            idempotencyKey: response.idempotencyKey,
-            relatedTransactionId: response.relatedTransactionId,
-            description: response.description,
-            createdAt: response.createdAt,
-            completedAt: response.createdAt
-        };
+        return response.getProps;
+
     }
 }
