@@ -25,12 +25,18 @@ import { PrismaTransactionRepository } from "../src/interfaces/persistence/prism
 import { createServer } from "node:http";
 import { SocketIoNotificationPublisher } from "../src/interfaces/persistence/socket-io/Socket-ioNotificationPublisher.ts";
 import { AuthMiddleware } from "../src/interfaces/http/middlewares/authMiddleware.ts";
+import { createAccountsRouter } from "../src/interfaces/http/routes/accounts.routes.ts";
+import { AccountsController } from "../src/interfaces/http/controllers/entities/AccountsController.ts";
+import { CheckAccountBalanceUseCase } from "../src/application/use-cases/accounts/checkAccountBalance/CheckAccountBalanceUseCase.ts";
+import { PrismaAccountRepository } from "../src/interfaces/persistence/prisma/repositories/PrismaAccountRepository.ts";
 
 const httpServer = createServer(app);
 
 const notificationPublisher = new SocketIoNotificationPublisher(httpServer);
 
 const userRepository = new PrismaUserRepository(prisma);
+
+const accountRepository = new PrismaAccountRepository(prisma);
 
 const passwordHasher = new Argon2PasswordHasher();
 
@@ -91,6 +97,11 @@ const transferUseCase = new TransferUsecase(
   tokenProvider
 )
 
+const checkAccountBalanceUseCase = new CheckAccountBalanceUseCase(
+  accountRepository,
+  tokenProvider
+)
+
 const authController = new AuthController(
   registerUserUseCase,
   loginUseCase,
@@ -103,6 +114,10 @@ const transfersController = new TransfersController(
   transferUseCase,
 )
 
+const accountsController = new AccountsController(
+  checkAccountBalanceUseCase,
+)
+
 const authRouter = createAuthRouter(
   authController,
 );
@@ -110,10 +125,16 @@ const authRouter = createAuthRouter(
 const transfersRouter = createTranfersRouter(
   transfersController,
   authMiddleware
+);
+
+const accountsRouter = createAccountsRouter(
+  accountsController,
+  authMiddleware
 )
 
 app.use("/auth", authRouter);
 app.use("/transfers", transfersRouter);
+app.use("/accounts", accountsRouter);
 app.use("/health", healthRouter);
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Financial Wallet API' });
@@ -133,4 +154,6 @@ export {
   registerUserUseCase,
   authController,
   authRouter,
+  accountsController,
+  accountsRouter
 };
