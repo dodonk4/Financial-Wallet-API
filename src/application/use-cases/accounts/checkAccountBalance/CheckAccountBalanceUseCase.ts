@@ -4,8 +4,8 @@ import { IAccountRepository } from "../../../ports/output/IAccountRepository";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
 import { CheckAccountBalanceDTORequest } from "./CheckAccountBalanceDTORequest";
 
-export class CheckAccountBalance {
-    private constructor(
+export class CheckAccountBalanceUseCase {
+    constructor(
         private readonly accountRepository: IAccountRepository,
         private readonly tokenServiceProvider: ITokenServiceProvider) { }
 
