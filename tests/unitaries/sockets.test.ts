@@ -34,7 +34,10 @@ describe("Sockets unitary tests", () => {
   test("Transfer endpoint", async () => {
     const transactionPromise = new Promise<Transaction>((resolve) => {
       clientSocketWallet.once("transaction", (transaction) => {
-        resolve(transaction);
+        //It comes serialized, so I have to pass props
+        //directly to then be able to access its values,
+        //because transaction stops being a Transaction instance
+        resolve(transaction.props);
       });
     });
 
@@ -56,11 +59,11 @@ describe("Sockets unitary tests", () => {
         description: "Generic description",
         idempotencyKey: "a6bb88de-9fb5-4a18-b77e-49d2347b791e"
       });
-    
-    
-    const transaction: any = await transactionPromise;
 
-    expect(transaction.props.props.idempotencyKey).toBe("a6bb88de-9fb5-4a18-b77e-49d2347b791e");
+
+    const transaction = await transactionPromise;
+    
+    expect(transaction.idempotencyKey).toBe("a6bb88de-9fb5-4a18-b77e-49d2347b791e");
 
   });
 
@@ -68,7 +71,7 @@ describe("Sockets unitary tests", () => {
     const hasherProvider = new SHA256Hasher();
     const cache = new RedisIdempotencyStore(redisClient, hasherProvider);
     await cache.flushAll();
-    
+
     clientSocketWallet.disconnect();
     walletApiServer.closeAllConnections();
     walletApiServer.close();
