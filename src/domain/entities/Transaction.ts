@@ -40,6 +40,12 @@ export class Transaction {
     return new Transaction(props);
   }
 
+  get getProps(): TransactionProps {
+    console.log("En getProps, this es: ", this);
+    console.log("En getProps, this.props es: ", this.props);
+    return this.props;
+  }
+
   get id(): string {
     return this.props.id;
   }
