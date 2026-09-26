@@ -14,9 +14,6 @@ export class AuthMiddleware implements IAuthMiddleware{
 
         const token = extractToken(req.headers.authorization);
 
-
-        console.log(this.tokenProvider);
-
         await this.tokenProvider.verifyAccessToken(token);
 
         next();
