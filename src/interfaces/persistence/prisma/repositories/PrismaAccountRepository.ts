@@ -54,4 +54,18 @@ export class PrismaAccountRepository implements IAccountRepository {
 
     return response;
   }
+
+  async findAllUserAccounts(userId: string): Promise<Account[]> {
+    const accounts = await this.prisma.account.findMany({ where: { userId } });
+
+    const accountsReconstituted: Account[] = [];
+
+    for (const account of accounts) {
+      const accountReconstituted = Account.reconstitute(account);
+      accountsReconstituted.push(accountReconstituted);
+    }
+
+
+    return accountsReconstituted;
+  }
 }

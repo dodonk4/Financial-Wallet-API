@@ -7,4 +7,6 @@ export interface IAccountRepository {
   findById(id: string): Promise<Account>;
 
   updateAmountById(id: string, amount: number, direction: Direction): Promise<Account>
+
+  findAllUserAccounts(userId: string): Promise<Account[]>
 }
