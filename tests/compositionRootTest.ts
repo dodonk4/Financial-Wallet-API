@@ -29,6 +29,7 @@ import { createAccountsRouter } from "../src/interfaces/http/routes/accounts.rou
 import { AccountsController } from "../src/interfaces/http/controllers/entities/AccountsController.ts";
 import { CheckAccountBalanceUseCase } from "../src/application/use-cases/accounts/checkAccountBalance/CheckAccountBalanceUseCase.ts";
 import { PrismaAccountRepository } from "../src/interfaces/persistence/prisma/repositories/PrismaAccountRepository.ts";
+import { CreateAdditionalAccountUseCase } from "../src/application/use-cases/accounts/createAdditionalAccount/CreateAdditionalAccountUseCase.ts";
 
 const httpServer = createServer(app);
 
@@ -102,6 +103,12 @@ const checkAccountBalanceUseCase = new CheckAccountBalanceUseCase(
   tokenProvider
 )
 
+const createAdditionalAccountUseCase = new CreateAdditionalAccountUseCase(
+  unitOfWork,
+  accountRepository,
+  tokenProvider
+)
+
 const authController = new AuthController(
   registerUserUseCase,
   loginUseCase,
@@ -116,6 +123,7 @@ const transfersController = new TransfersController(
 
 const accountsController = new AccountsController(
   checkAccountBalanceUseCase,
+  createAdditionalAccountUseCase
 )
 
 const authRouter = createAuthRouter(

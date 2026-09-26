@@ -1,7 +1,9 @@
 import { Router } from "express"
 import { AccountsController } from "../controllers/entities/AccountsController"
 import { IAuthMiddleware } from "../../../application/ports/input/IAuthMiddleware";
-import { CheckAccountBalanceDTORequest } from "../../../application/use-cases/accounts/checkAccountBalance/CheckAccountBalanceDTORequest";
+import { CheckAccountBalanceRequestDTO } from "../../../application/use-cases/accounts/checkAccountBalance/CheckAccountBalanceRequestDTO";
+import { validateRequest } from "../validators/validateRequest";
+import { createAdditionalAccountSchema } from "../schemas/createAdditionalAccountSchema";
 
 export const createAccountsRouter = (
     accountsController: AccountsController,
@@ -10,10 +12,17 @@ export const createAccountsRouter = (
 
     const router = Router();
 
-    router.get<CheckAccountBalanceDTORequest>(
+    router.get<CheckAccountBalanceRequestDTO>(
         "/:accountId/balance",
         authMiddleware.verifyAuth,
         accountsController.checkAccountBalance,
+    )
+
+    router.post(
+        "/create",
+        validateRequest(createAdditionalAccountSchema),
+        authMiddleware.verifyAuth,
+        accountsController.createAdditionalAccount,
     )
 
     return router;
