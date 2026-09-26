@@ -11,7 +11,10 @@ export class TransfersController {
         req: Request,
         res: Response
     ): Promise<void> => {
-        const response = await this.transferUseCase.execute(req.body, req.headers.authorization || "");
+        if(!req.headers.authorization){
+            throw new Error("User not authenticated"); //Create new error
+        }
+        const response = await this.transferUseCase.execute(req.body, req.headers.authorization);
         res.status(201).json(response);
     }
 }
