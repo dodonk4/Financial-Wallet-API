@@ -39,6 +39,10 @@ export class Account {
     return new Account(props);
   }
 
+  get getProps() {
+    return this.props;
+  }
+
   get id() {
     return this.props.id;
   }
