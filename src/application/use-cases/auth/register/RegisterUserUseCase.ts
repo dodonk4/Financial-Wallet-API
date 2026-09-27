@@ -5,8 +5,7 @@ import { Currency } from "../../../../domain/entities/Currency.ts";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken.ts";
 import { User } from "../../../../domain/entities/User.ts";
 
-import { EmailAlreadyExistsError } from "../../../../domain/errors/EmaiAlreadyExistsError.ts";
-import { DocumentAlreadyExistsError } from "../../../../domain/errors/DocumentAlreadyExistsError.ts";
+import { ConflictError } from "../../../../domain/errors/http/ConflictError.ts";
 
 import { UserRegisteredEvent } from "../../../../domain/events/UserRegisteredEvent.ts";
 
@@ -37,7 +36,7 @@ export class RegisterUserUseCase {
     const emailExists = await this.userRepository.existsByEmail(dto.email);
 
     if (emailExists) {
-      throw new EmailAlreadyExistsError(dto.email);
+      throw new ConflictError(`A user with email "${dto.email}" already exists.`);
     }
 
     const documentExists = await this.userRepository.existsByDocument(
@@ -46,7 +45,7 @@ export class RegisterUserUseCase {
     );
 
     if (documentExists) {
-      throw new DocumentAlreadyExistsError(dto.document.number.toString());
+      throw new ConflictError(`A user with document "${dto.document.number.toString()}" already exists.`);
     }
 
     const passwordHash = await this.passwordHasher.hash(dto.password);

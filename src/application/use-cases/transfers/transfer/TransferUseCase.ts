@@ -6,14 +6,14 @@ import { TransferServiceResponseDTO } from "./TransferResponseDTO";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
 import { randomUUID } from "node:crypto";
 import { LedgerEntry } from "../../../../domain/entities/LedgerEntry";
-import { CurrencyConflictError } from "../../../../domain/errors/CurrencyConflict";
-import { InsufficientBalance } from "../../../../domain/errors/InsufficientBalance";
-import { IdempotencyPayloadConflictError } from "../../../../domain/errors/IdempotencyPayloadConflict";
+import { CurrencyConflictError } from "../../../../domain/errors/domain/CurrencyConflict";
+import { ConflictError } from "../../../../domain/errors/http/ConflictError";
 import { ITransactionRepository } from "../../../ports/output/ITransactionRepository";
 import { INotificationPublisher } from "../../../ports/output/INotificationPublisher";
 import extractToken from "../../../../interfaces/http/auth/extractToken";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
-import { ForbiddenError } from "../../../../domain/errors/ForbiddenError";
+import { ForbiddenError } from "../../../../domain/errors/http/ForbiddenError";
+import { InsufficientBalance } from "../../../../domain/errors/domain/InsufficientBalance";
 
 export interface IdempotencyValueSaved {
     secretPayload: string,
@@ -47,7 +47,7 @@ export class TransferUsecase {
                 return response;
             }
 
-            throw new IdempotencyPayloadConflictError();
+            throw new ConflictError("The idempotency key was already used with a different payload.");
         }
 
         const idempotencyInDB: Transaction | null = await this.transactionRepository.findByIdempotencyKey(idempotencyKey);
@@ -65,8 +65,7 @@ export class TransferUsecase {
             const originAccount = await repositories.account.findById(dto.originAccountId);
 
             if (originAccount.userId != decoded?.sub) {
-                // throw new Error("The user is not the owner of the origin account");
-                throw new ForbiddenError();
+                throw new ForbiddenError("The user is not the owner of the origin account");
             }
             
             const destinyAccount = await repositories.account.findById(dto.destinyAccountId);

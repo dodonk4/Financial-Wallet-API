@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken.ts";
 import { User } from "../../../../domain/entities/User.ts";
-import { ForbiddenError } from "../../../../domain/errors/ForbiddenError.ts";
-import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError.ts";
+import { ForbiddenError } from "../../../../domain/errors/http/ForbiddenError.ts";
+import { UnauthorizedError } from "../../../../domain/errors/http/UnauthorizedError.ts";
 import { IEventPublisher } from "../../../ports/output/IEventPublisher.ts";
 import { IPasswordHasher } from "../../../ports/output/IPasswordHasher.ts";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider.ts";
@@ -28,19 +28,19 @@ export class LoginUseCase {
         const emailExists = await this.userRepository.existsByEmail(dto.email);
 
         if (!emailExists) {
-            throw new InvalidCredentialsError();
+            throw new UnauthorizedError("Invalid credentials.");
         }
 
         const user = await this.userRepository.findByEmail(dto.email);
 
         if (user?.status != "ACTIVE") {
-            throw new ForbiddenError();
+            throw new ForbiddenError("The user account is not active.");
         }
 
         const verifiedPassword = await this.passwordHasher.verify(dto.password, user.passwordHash);
 
         if (!verifiedPassword) {
-            throw new InvalidCredentialsError();
+            throw new UnauthorizedError("Invalid credentials.");
         }
 
         const userTransformed = User.reconstitute(user);

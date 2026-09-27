@@ -1,5 +1,5 @@
-import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
-import { RefreshTokenAlreadyRevokedError } from "../../../../domain/errors/RefreshTokenAlreadyRevokedError";
+import { ConflictError } from "../../../../domain/errors/http/ConflictError";
+import { UnauthorizedError } from "../../../../domain/errors/http/UnauthorizedError";
 import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
@@ -14,7 +14,7 @@ export class LogoutAllUseCase {
     async execute(dto: LogoutRequestDTO) {
 
         if (!dto.authorization) {
-            throw new InvalidCredentialsError();
+            throw new UnauthorizedError("Invalid credentials.");
         }
 
         await this.unitOfWork.execute(async (repositories) => {
@@ -31,7 +31,7 @@ export class LogoutAllUseCase {
             const rowsAffected: { count: number } = await repositories.refreshToken.revokeManyByFamilyId(refreshTokenToRevoke.familyId);
 
             if(!rowsAffected.count){
-                throw new RefreshTokenAlreadyRevokedError();
+                throw new ConflictError("The token cannot be revoked because it has been already revoked");
             }
 
 

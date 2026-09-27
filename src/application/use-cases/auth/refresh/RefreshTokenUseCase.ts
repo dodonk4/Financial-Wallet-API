@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken";
-import { NonValidRefreshTokenError } from "../../../../domain/errors/NonValidRefreshTokenError";
+import { UnauthorizedError } from "../../../../domain/errors/http/UnauthorizedError";
 import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
 import { UserNotFound } from "../../../../domain/errors/404/UserNotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
@@ -8,7 +8,6 @@ import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvid
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
 import { RefreshTokenRequestDTO } from "./RefreshTokenRequestDTO";
 import { RefreshTokenResponseDTO } from "./RefreshTokenResponseDTO";
-import { InvalidCredentialsError } from "../../../../domain/errors/InvalidCredentialsError";
 
 export class RefreshTokenUseCase {
     constructor(
@@ -20,7 +19,7 @@ export class RefreshTokenUseCase {
     async execute(dto: RefreshTokenRequestDTO): Promise<RefreshTokenResponseDTO> {
 
         if(!dto.authorization){
-            throw new InvalidCredentialsError();
+            throw new UnauthorizedError("Invalid credentials.");
         }
 
         const newTokens = await this.unitOfWork.execute(async (repositories) => {
@@ -42,14 +41,14 @@ export class RefreshTokenUseCase {
             }
 
             if (refreshToken?.revoked) {
-                throw new NonValidRefreshTokenError();
+                throw new UnauthorizedError("The token provided is nvalid, expired, revoked or used");
             }
 
             if (refreshToken?.used) {
 
                 await repositories.refreshToken.revokeManyByFamilyId(refreshToken.familyId);
 
-                throw new NonValidRefreshTokenError();
+                throw new UnauthorizedError("The token provided is nvalid, expired, revoked or used");
             }
 
             const rowCount = await repositories.refreshToken.consumeById(refreshToken.id);
@@ -58,7 +57,7 @@ export class RefreshTokenUseCase {
 
                 await repositories.refreshToken.revokeManyByFamilyId(refreshToken.familyId);
 
-                throw new NonValidRefreshTokenError();
+                throw new UnauthorizedError("The token provided is nvalid, expired, revoked or used");
 
             }
 

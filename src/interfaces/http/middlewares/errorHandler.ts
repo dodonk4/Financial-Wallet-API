@@ -1,10 +1,10 @@
 import express from "express"
-import { NonValidRefreshTokenError } from "../../../domain/errors/NonValidRefreshTokenError";
+import { UnauthorizedError } from "../../../domain/errors/http/UnauthorizedError";
 
 const errorHandler = (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
 
     if(err.name === "JsonWebTokenError" || err.name === "TokenExpiredError"){
-        throw new NonValidRefreshTokenError();
+        throw new UnauthorizedError("The token provided is invalid, expired, revoked or used");
     }
 
     next(err);
