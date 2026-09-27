@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client";
 import { IRefreshTokenRepository } from "../../../../application/ports/output/IRefreshTokenRepository";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken";
-import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
+import { NotFoundError } from "../../../../domain/errors/http/NotFoundError";
 
 
 export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
@@ -36,7 +36,7 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
         const refreshToken = await this.prisma.refreshToken.findUnique({ where: { id } });
 
         if (!refreshToken) {
-            throw new RefreshTokenNotFoundError();
+            throw new NotFoundError("Refresh Token not found.");
         }
 
         const refreshTokenToReturn = RefreshToken.reconstitute(refreshToken);
@@ -49,7 +49,7 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
         const refreshToken = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
 
         if (!refreshToken) {
-            throw new RefreshTokenNotFoundError();
+            throw new NotFoundError("Refresh Token not found.");
         }
 
         const refreshTokenToReturn = RefreshToken.reconstitute(refreshToken);

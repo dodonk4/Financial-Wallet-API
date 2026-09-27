@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { RefreshToken } from "../../../../domain/entities/RefreshToken";
 import { UnauthorizedError } from "../../../../domain/errors/http/UnauthorizedError";
-import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
-import { UserNotFound } from "../../../../domain/errors/404/UserNotFoundError";
+import { NotFoundError } from "../../../../domain/errors/http/NotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
@@ -29,7 +28,7 @@ export class RefreshTokenUseCase {
             const user = await repositories.user.findById(payload.sub);
 
             if (!user) {
-                throw new UserNotFound();
+                throw new NotFoundError("User not found.");
             }
 
             const tokenHash = await this.tokenHasher.hash(dto.authorization);
@@ -37,7 +36,7 @@ export class RefreshTokenUseCase {
             const refreshToken = await repositories.refreshToken.findByTokenHash(tokenHash);
 
             if (!refreshToken) {
-                throw new RefreshTokenNotFoundError();
+                throw new NotFoundError("Refresh Token not found.");
             }
 
             if (refreshToken?.revoked) {

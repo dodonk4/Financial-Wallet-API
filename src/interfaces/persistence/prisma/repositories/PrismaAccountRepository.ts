@@ -1,7 +1,7 @@
 import { IAccountRepository } from "../../../../application/ports/output/IAccountRepository.ts";
 import { Account } from "../../../../domain/entities/Account.ts";
 import { Prisma, PrismaClient } from "../../../../../generated/prisma/client.ts";
-import { AccountNotFound } from "../../../../domain/errors/404/AccountNotFoundError.ts";
+import { NotFoundError } from "../../../../domain/errors/http/NotFoundError.ts";
 import { Direction } from "../../../../domain/entities/Direction.ts";
 
 
@@ -27,7 +27,7 @@ export class PrismaAccountRepository implements IAccountRepository {
     const account = await this.prisma.account.findUnique({ where: { id } });
 
     if (!account) {
-      throw new AccountNotFound();
+      throw new NotFoundError("Account not found.");
     }
 
     const response = Account.reconstitute(account);

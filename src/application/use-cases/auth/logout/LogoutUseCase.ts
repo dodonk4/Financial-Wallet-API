@@ -1,6 +1,6 @@
 import { ConflictError } from "../../../../domain/errors/http/ConflictError";
 import { UnauthorizedError } from "../../../../domain/errors/http/UnauthorizedError";
-import { RefreshTokenNotFoundError } from "../../../../domain/errors/404/RefreshTokenNotFoundError";
+import { NotFoundError } from "../../../../domain/errors/http/NotFoundError";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher";
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
 import { LogoutRequestDTO } from "./LogoutRequestDTO";
@@ -23,7 +23,7 @@ export class LogoutUseCase {
             const refreshTokenToRevoke = await repositories.refreshToken.findByTokenHash(tokenHash);
 
             if (!refreshTokenToRevoke) {
-                throw new RefreshTokenNotFoundError();
+                throw new NotFoundError("Refresh Token not found.");
             }
 
             if(refreshTokenToRevoke.revoked === true){
