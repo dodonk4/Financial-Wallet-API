@@ -6,6 +6,7 @@ import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvid
 import { IUnitOfWork } from "../../../ports/output/IUnitOfWork";
 import { CreateAdditionalAccountRequestDTO } from "./CreateAdditionalAccountRequestDTO";
 import { CreateAdditionalAccountResponseDTO } from "./CreateAdditionalAccountResponseDTO";
+import { ConflictError } from "../../../../domain/errors/http/ConflictError";
 
 export class CreateAdditionalAccountUseCase {
     constructor(
@@ -34,7 +35,7 @@ export class CreateAdditionalAccountUseCase {
 
         for (const account of accounts) {
             if(account.currency === dto.currency){
-                throw new Error("A new account with the same currency as an existing user account cannot be created");
+                throw new ConflictError("A new account with the same currency as an existing user account cannot be created");
             }
         }
 
