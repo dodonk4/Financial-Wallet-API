@@ -48,6 +48,7 @@ model User {
 
   accounts      Account[]
   refreshTokens RefreshToken[]
+  notifications Notification[]
 
   @@unique([identifierType, identifierNumber], map: "uq_users_identifier")
   @@map("users")
@@ -149,4 +150,25 @@ model LedgerEntry {
   @@index([accountId, createdAt(sort: Desc)])
   @@index([transactionId])
   @@map("ledger_entries")
+}
+
+enum NotificationType {
+  TRANSFER_RECEIVED
+  TRANSFER_SENT
+  CARD_BLOCKED
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  type      NotificationType
+  payload   Json             @db.Json
+  read      Boolean          @default(false)
+  createdAt DateTime         @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId], where: raw("read = false"))
+  @@map("notifications")
 }
