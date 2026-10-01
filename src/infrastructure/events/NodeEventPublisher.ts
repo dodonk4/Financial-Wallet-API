@@ -14,10 +14,10 @@ export class NodeEventPublisher implements IEventPublisher {
     this.emitter.emit(event.eventName, event);
   }
 
-  subscribe<T extends DomainEvent>(
+  async subscribe<T extends DomainEvent>(
     eventName: string,
     handler: EventHandler<T>,
-  ): void {
+  ): Promise<void> {
     this.emitter.on(eventName, async (event: T) => {
       await handler(event);
     });
