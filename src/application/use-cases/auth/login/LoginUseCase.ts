@@ -11,7 +11,7 @@ import { IUserRepository } from "../../../ports/output/IUserRepository.ts";
 import { LoginRequestDTO } from "./LoginRequestDTO.ts";
 import { LoginResponseDTO } from "./LoginResponseDTO.ts";
 import { ITokenHasher } from "../../../ports/output/ITokenHasher.ts";
-import { userLoggedEvent } from "../../../../domain/events/UserLoggedEvent.ts";
+import { userLoggedEvent } from "../../../../domain/events/UserLogged.ts";
 
 export class LoginUseCase {
     constructor(

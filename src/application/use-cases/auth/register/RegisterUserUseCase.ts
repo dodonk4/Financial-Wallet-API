@@ -7,7 +7,7 @@ import { User } from "../../../../domain/entities/User.ts";
 
 import { ConflictError } from "../../../../domain/errors/http/ConflictError.ts";
 
-import { UserRegisteredEvent } from "../../../../domain/events/UserRegisteredEvent.ts";
+import { UserRegisteredEvent } from "../../../../domain/events/UserRegistered.ts";
 
 import type { IUserRepository } from "../../../ports/output/IUserRepository.ts";
 import type { IPasswordHasher } from "../../../ports/output/IPasswordHasher.ts";
