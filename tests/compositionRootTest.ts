@@ -33,7 +33,7 @@ import { CreateAdditionalAccountUseCase } from "../src/application/use-cases/acc
 
 const httpServer = createServer(app);
 
-const notificationPublisher = new SocketIoNotificationPublisher(httpServer);
+const __notificationPublisher = new SocketIoNotificationPublisher(httpServer);
 
 const userRepository = new PrismaUserRepository(prisma);
 
@@ -94,7 +94,7 @@ const transferUseCase = new TransferUsecase(
   tokenHasher,
   unitOfWork,
   transactionRepository,
-  notificationPublisher,
+  eventPublisher,
   tokenProvider
 )
 

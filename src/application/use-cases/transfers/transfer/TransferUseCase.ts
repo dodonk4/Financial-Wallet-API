@@ -9,11 +9,12 @@ import { LedgerEntry } from "../../../../domain/entities/LedgerEntry";
 import { CurrencyConflictError } from "../../../../domain/errors/domain/CurrencyConflict";
 import { ConflictError } from "../../../../domain/errors/http/ConflictError";
 import { ITransactionRepository } from "../../../ports/output/ITransactionRepository";
-import { INotificationPublisher } from "../../../ports/output/INotificationPublisher";
 import extractToken from "../../../../interfaces/http/auth/extractToken";
 import { ITokenServiceProvider } from "../../../ports/output/ITokenServiceProvider";
 import { ForbiddenError } from "../../../../domain/errors/http/ForbiddenError";
 import { InsufficientBalance } from "../../../../domain/errors/domain/InsufficientBalance";
+import { IEventPublisher } from "../../../ports/output/IEventPublisher";
+import { TransactionCompleted } from "../../../../domain/events/TransactionCompleted";
 
 export interface IdempotencyValueSaved {
     secretPayload: string,
@@ -26,7 +27,7 @@ export class TransferUsecase {
         private readonly hashProvider: ITokenHasher,
         private readonly unitOfWork: IUnitOfWork,
         private readonly transactionRepository: ITransactionRepository,
-        private readonly notificationPublisher: INotificationPublisher,
+        private readonly eventPublisher: IEventPublisher,
         private readonly tokenServiceProvider: ITokenServiceProvider,
     ) { }
 
@@ -67,7 +68,7 @@ export class TransferUsecase {
             if (originAccount.userId != decoded?.sub) {
                 throw new ForbiddenError("The user is not the owner of the origin account");
             }
-            
+
             const destinyAccount = await repositories.account.findById(dto.destinyAccountId);
 
             if (originAccount.currency != destinyAccount.currency) {
@@ -136,7 +137,15 @@ export class TransferUsecase {
 
         await this.idempotencyStore.saveIdempotencyKey(idempotencyKey, valueToSaveInCache);
 
-        this.notificationPublisher.emitSuccesfulTransaction(response, dto.originAccountId);
+        this.eventPublisher.publish(
+            new TransactionCompleted(
+                response.id,
+                dto.originAccountId,
+                dto.destinyAccountId,
+                dto.amount,
+                dto.currency
+            )
+        )
 
         return response.getProps;
 
