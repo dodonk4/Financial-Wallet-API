@@ -1,12 +1,12 @@
 import { DomainEvent } from "./DomainEvent";
 
-export class UserLoginFailed implements DomainEvent {
-  readonly eventName = "user.login.failed.threshold_reached";
+export class RefreshTokenReused implements DomainEvent {
+  readonly eventName = "refresh_token.reuse_detected";
   readonly occurredAt = new Date();
 
   constructor(
     public readonly userId: string,
-    public readonly email: string,
+    public readonly familyId: string,
     public readonly ipAddress: string,
   ) {}
 }
